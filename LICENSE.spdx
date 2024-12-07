@@ -1,0 +1,7 @@
+SPDXVersion: SPDX-2.0
+DataLicense: Artistic-2.0
+Creator: Brad Clawsie
+PackageName: GrokLOC-Perl
+PackageOriginator: Brad Clawsie
+PackageHomePage: https://github.com/bradclawsie/grokloc-perl
+PackageLicenseDeclared: Artistic-2.0
