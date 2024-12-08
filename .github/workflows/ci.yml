@@ -27,3 +27,12 @@ jobs:
 
     - name: Perl Dependencies
       run: just deps
+
+    - name: perl -c
+      run: just check
+
+    - name: perlcritic
+      run: just critic
+
+    - name: Tests
+      run: just test
