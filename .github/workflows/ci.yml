@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  CI:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Perl
+      uses: shogo82148/actions-setup-perl@v1
+      with:
+        perl-version: '5.40'
+
+    - name: System dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential ca-certificates fish git just libgit2-dev libpq-dev libssl3 libssl-dev zlib1g-dev
+
+    - name: Perl Version
+      run: perl --version
+
+    - name: Perl Dependencies
+      run: just deps
