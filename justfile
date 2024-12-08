@@ -21,6 +21,7 @@ critic:
 deps:
     cpanm -n \
         Object::Pad \
+        perlcritic \
         strictures \
         Test2::Harness \
         Test2::Suite
