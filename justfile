@@ -1,8 +1,8 @@
 set shell := ["fish", "-c"]
 set dotenv-load
 
-perlimports := "perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename ./.perlimports-ignore -f"
-perltidy := "perltidier -dws -io -i=2 -pt=2 -bt=2 -pvt=2"
+perlimports := "perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename ./.perlimports-ignore -f "
+perltidy := "perltidier -i=2 -pt=2 -bt=2 -pvt=2 -b "
 
 default:
     @just --list
@@ -16,23 +16,24 @@ check:
 
 critic:
     find . -name \*.pm -print0 | xargs -0 perlcritic
-    # find . -name \*.t -print0 | xargs -0 perlcritic --theme=tests
+    find . -name \*.t -print0 | xargs -0 perlcritic --theme=tests
 
 deps:
     cpanm -n \
+        Object::Pad \
         Test2::Harness \
         Test2::Suite
 
 imports:
     find . -name \*.pm -print0 | xargs -0 {{perlimports}}
-    # find . -name \*.t -print0 | xargs -0 {{perlimports}}
+    find . -name \*.t -print0 | xargs -0 {{perlimports}}
 
 test:
     find . -name \*.t -print0 | xargs -0 yath --max-open-jobs=1000
 
 tidy:
     find . -name \*.pm -print0 | xargs -0 {{perltidy}} 2>/dev/null
-    # find . -name \*.t -print0 | xargs -0 {{perltidy}} 2>/dev/null
+    find . -name \*.t -print0 | xargs -0 {{perltidy}} 2>/dev/null
     find -name \*bak -delete
     find -name \*.ERR -delete
 
