@@ -37,5 +37,6 @@ tidy:
     find . -name \*.pm -print0 | xargs -0 {{perltidy}} 2>/dev/null
     find . -name \*.t -print0 | xargs -0 {{perltidy}} 2>/dev/null
     find -name \*bak -delete
+    find -name \*tdy -delete
     find -name \*.ERR -delete
 
