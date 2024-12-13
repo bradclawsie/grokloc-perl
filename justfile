@@ -22,7 +22,7 @@ deps:
     cpanm -n \
         Carp \
         English \
-        ListUtils::All \
+        List::AllUtils \
         Object::Pad \
         Perl::Critic \
         strictures \
