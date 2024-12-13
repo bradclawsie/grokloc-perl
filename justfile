@@ -11,8 +11,8 @@ all:
     just --justfile {{justfile()}} check critic imports tidy test
 
 check:
-    for i in $(find . -name \*.pm); perl -c $i; end
-    for i in $(find . -name \*.t); perl -c $i; end
+    for i in $(find . -name \*.pm); perl -Ilib -c $i; end
+    for i in $(find . -name \*.t); perl -Ilib -c $i; end
 
 critic:
     find . -name \*.pm -print0 | xargs -0 perlcritic
@@ -20,9 +20,13 @@ critic:
 
 deps:
     cpanm -n \
+        Carp \
+        English \
+        ListUtils::All \
         Object::Pad \
         Perl::Critic \
         strictures \
+        Readonly \
         Test2::Harness \
         Test2::Suite
 
