@@ -1,7 +1,8 @@
 package main;
 use v5.40;
+use Cpanel::JSON::XS        ();
 use English                 qw(-no_match_vars);
-use Test2::V0               qw( done_testing note ok );
+use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
 use strictures 2;
 use lib '../lib';
@@ -32,6 +33,17 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+my $role;
+
+ok(
+  lives {
+    $role = Role->new(value => $Role::normal);
+  },
+) or note($EVAL_ERROR);
+
+my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
+is($Role::normal, $json->encode($role));
+
 ok(
   lives {
     Status->new(value => $Status::unconfirmed);
@@ -51,5 +63,15 @@ ok(
     Status->new(value => $Status::none);
   },
 ) or note($EVAL_ERROR);
+
+my $status;
+
+ok(
+  lives {
+    $status = Status->new(value => $Status::active);
+  },
+) or note($EVAL_ERROR);
+
+is($Status::active, $json->encode($status));
 
 done_testing;

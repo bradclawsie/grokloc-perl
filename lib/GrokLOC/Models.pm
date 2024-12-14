@@ -15,13 +15,17 @@ class Role {
   Readonly::Scalar our $admin  => 2;
   Readonly::Scalar our $test   => 3;
 
-  field $value :param;
+  field $value :param : reader;
 
   ADJUST {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
     croak '$value malformed'
       unless any { $_ == $value } ($normal, $admin, $test);
+  }
+
+  sub TO_JSON ($self) {
+    return $self->value;
   }
 }
 
@@ -31,13 +35,17 @@ class Status {
   Readonly::Scalar our $active      => 2;
   Readonly::Scalar our $inactive    => 3;
 
-  field $value :param;
+  field $value :param : reader;
 
   ADJUST {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
     croak '$value malformed'
       unless any { $_ == $value } ($unconfirmed, $active, $inactive);
+  }
+
+  sub TO_JSON ($self) {
+    return $self->value;
   }
 }
 

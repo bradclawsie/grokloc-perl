@@ -21,6 +21,7 @@ critic:
 deps:
     cpanm -n \
         Carp \
+        Cpanel::JSON::XS \
         English \
         List::AllUtils \
         Object::Pad \
