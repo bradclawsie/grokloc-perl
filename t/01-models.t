@@ -28,7 +28,27 @@ ok(
 
 ok(
   dies {
-    Role->new($Role::none);
+    Role->new(value => $Role::none);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
+    Status->new(value => $Status::unconfirmed);
+    Status->new(value => $Status::active);
+    Status->new(value => $Status::inactive);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    Status->new();
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    Status->new(value => $Status::none);
   },
 ) or note($EVAL_ERROR);
 

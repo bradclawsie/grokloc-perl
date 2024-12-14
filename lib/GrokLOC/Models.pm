@@ -25,4 +25,20 @@ class Role {
   }
 }
 
+class Status {
+  Readonly::Scalar our $none        => 0;
+  Readonly::Scalar our $unconfirmed => 1;
+  Readonly::Scalar our $active      => 2;
+  Readonly::Scalar our $inactive    => 3;
+
+  field $value :param;
+
+  ADJUST {
+    use Carp           qw( croak );
+    use List::AllUtils qw( any );
+    croak '$value malformed'
+      unless any { $_ == $value } ($unconfirmed, $active, $inactive);
+  }
+}
+
 __END__
