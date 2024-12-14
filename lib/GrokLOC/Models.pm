@@ -15,7 +15,7 @@ class Role {
   Readonly::Scalar our $admin  => 2;
   Readonly::Scalar our $test   => 3;
 
-  field $value :param = $none;
+  field $value :param;
 
   ADJUST {
     use Carp           qw( croak );
