@@ -16,7 +16,9 @@ class Env {
   Readonly::Scalar our $stage => 2;
   Readonly::Scalar our $prod  => 3;
 
-  field $value :param : reader;
+  #<<V
+  field $value :param :reader;
+  #>>V
 
   ADJUST {
     use Carp           qw( croak );
