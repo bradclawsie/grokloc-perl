@@ -24,8 +24,8 @@ class Role {
       unless any { $_ == $value } ($normal, $admin, $test);
   }
 
-  sub TO_JSON ($self) {
-    return $self->value;
+  method TO_JSON {
+    return $value;
   }
 }
 
@@ -44,8 +44,8 @@ class Status {
       unless any { $_ == $value } ($unconfirmed, $active, $inactive);
   }
 
-  sub TO_JSON ($self) {
-    return $self->value;
+  method TO_JSON {
+    return $value;
   }
 }
 
