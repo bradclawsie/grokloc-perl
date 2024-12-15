@@ -42,6 +42,7 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok($env isa Env);
 my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
 is($Env::unit, $json->encode($env));
 

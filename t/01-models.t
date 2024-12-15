@@ -41,6 +41,7 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok($role isa Role);
 my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
 is($Role::normal, $json->encode($role));
 
@@ -72,6 +73,7 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok($status isa Status);
 is($Status::active, $json->encode($status));
 
 done_testing;
