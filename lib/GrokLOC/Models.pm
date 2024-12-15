@@ -15,7 +15,9 @@ class Role {
   Readonly::Scalar our $admin  => 2;
   Readonly::Scalar our $test   => 3;
 
-  field $value :param : reader;
+  #<<V
+  field $value :param :reader;
+  #>>V
 
   ADJUST {
     use Carp           qw( croak );
@@ -35,7 +37,9 @@ class Status {
   Readonly::Scalar our $active      => 2;
   Readonly::Scalar our $inactive    => 3;
 
-  field $value :param : reader;
+  #<<V
+  field $value :param :reader;
+  #>>V
 
   ADJUST {
     use Carp           qw( croak );
@@ -47,6 +51,17 @@ class Status {
   method TO_JSON {
     return $value;
   }
+}
+
+class Meta {
+  #<<V
+  field $ctime :param :reader;
+  field $mtime :param :reader;
+  field $role :param :reader;
+  field $schema_version :param :reader;
+  field $signature :param :reader;
+  field $status :param :reader;
+  #>>V
 }
 
 __END__

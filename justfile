@@ -2,7 +2,7 @@ set shell := ["fish", "-c"]
 set dotenv-load
 
 perlimports := "perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename ./.perlimports-ignore -f "
-perltidy := "perltidier -i=2 -pt=2 -bt=2 -pvt=2 -b "
+perltidy := "perltidier -i=2 -pt=2 -bt=2 -pvt=2 -b -cs "
 
 default:
     @just --list
