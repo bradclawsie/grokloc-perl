@@ -22,6 +22,7 @@ deps:
     cpanm -n \
         Carp \
         Cpanel::JSON::XS \
+        CryptX \
         English \
         List::AllUtils \
         Object::Pad \

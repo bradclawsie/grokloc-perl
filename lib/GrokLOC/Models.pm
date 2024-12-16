@@ -64,7 +64,8 @@ class Meta {
   #>>V
 
   ADJUST {
-    use Carp qw( croak );
+    use Carp        qw( croak );
+    use Crypt::Misc qw( is_v4uuid );
     my $now = time;
     croak 'ctime' unless int($ctime) == $ctime && 0 <= $ctime <= $now;
     croak 'mtime' unless int($mtime) == $mtime && 0 <= $mtime <= $now;
@@ -72,8 +73,19 @@ class Meta {
     croak 'schema_version'
       unless int($schema_version) == $schema_version
       && $schema_version >= 0;
-    croak 'signature' unless length $signature != 0;
+    croak 'signature' unless is_v4uuid($signature);
     croak 'status'    unless $status isa Status;
+  }
+
+  method TO_JSON {
+    return {
+      ctime          => $ctime,
+      mtime          => $mtime,
+      role           => $role->TO_JSON,
+      schema_version => $schema_version,
+      signature      => $signature,
+      status         => $status->TO_JSON
+    };
   }
 }
 
