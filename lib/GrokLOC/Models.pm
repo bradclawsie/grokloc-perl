@@ -22,7 +22,7 @@ class Role {
   ADJUST {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
-    croak '$value malformed'
+    croak 'value'
       unless any { $_ == $value } ($normal, $admin, $test);
   }
 
@@ -44,7 +44,7 @@ class Status {
   ADJUST {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
-    croak '$value malformed'
+    croak 'value'
       unless any { $_ == $value } ($unconfirmed, $active, $inactive);
   }
 
@@ -62,6 +62,19 @@ class Meta {
   field $signature :param :reader;
   field $status :param :reader;
   #>>V
+
+  ADJUST {
+    use Carp qw( croak );
+    my $now = time;
+    croak 'ctime' unless int($ctime) == $ctime && 0 <= $ctime <= $now;
+    croak 'mtime' unless int($mtime) == $mtime && 0 <= $mtime <= $now;
+    croak 'role'  unless $role isa Role;
+    croak 'schema_version'
+      unless int($schema_version) == $schema_version
+      && $schema_version >= 0;
+    croak 'signature' unless length $signature != 0;
+    croak 'status'    unless $status isa Status;
+  }
 }
 
 __END__
