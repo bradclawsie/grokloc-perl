@@ -203,4 +203,87 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok(
+  lives {
+    my $now = time;
+    $json->decode(
+      $json->encode(
+        Meta->new(
+          ctime          => $now,
+          mtime          => $now,
+          role           => $role,
+          schema_version => 0,
+          signature      => random_v4uuid,
+          status         => $status
+        )
+      )
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
+    my $now = time;
+    Base->new(
+      id   => random_v4uuid,
+      meta => Meta->new(
+        ctime          => $now,
+        mtime          => $now,
+        role           => $role,
+        schema_version => 0,
+        signature      => random_v4uuid,
+        status         => $status
+      )
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    my $now = time;
+    Base->new(
+      id   => '',
+      meta => Meta->new(
+        ctime          => $now,
+        mtime          => $now,
+        role           => $role,
+        schema_version => 0,
+        signature      => random_v4uuid,
+        status         => $status
+      )
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    my $now = time;
+    Base->new(
+      id   => random_v4uuid,
+      meta => undef
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
+    my $now = time;
+    $json->decode(
+      $json->encode(
+        Base->new(
+          id   => random_v4uuid,
+          meta => Meta->new(
+            ctime          => $now,
+            mtime          => $now,
+            role           => $role,
+            schema_version => 0,
+            signature      => random_v4uuid,
+            status         => $status
+          )
+        )
+      )
+    );
+  },
+) or note($EVAL_ERROR);
+
 done_testing;

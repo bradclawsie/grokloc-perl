@@ -89,4 +89,25 @@ class Meta {
   }
 }
 
+class Base {
+  #<<V
+  field $id :param :reader;
+  field $meta :param :reader;
+  #>>V
+
+  ADJUST {
+    use Carp        qw( croak );
+    use Crypt::Misc qw( is_v4uuid );
+    croak 'id'   unless is_v4uuid($id);
+    croak 'meta' unless $meta isa Meta;
+  }
+
+  method TO_JSON {
+    return {
+      id   => $id,
+      meta => $meta->TO_JSON
+    };
+  }
+}
+
 __END__
