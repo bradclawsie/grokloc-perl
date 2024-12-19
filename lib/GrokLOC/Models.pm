@@ -10,10 +10,10 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Role {
-  Readonly::Scalar our $none   => 0;
-  Readonly::Scalar our $normal => 1;
-  Readonly::Scalar our $admin  => 2;
-  Readonly::Scalar our $test   => 3;
+  Readonly::Scalar our $NONE   => 0;
+  Readonly::Scalar our $NORMAL => 1;
+  Readonly::Scalar our $ADMIN  => 2;
+  Readonly::Scalar our $TEST   => 3;
 
   #<<V
   field $value :param :reader;
@@ -23,7 +23,7 @@ class Role {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
     croak 'value'
-      unless any { $_ == $value } ($normal, $admin, $test);
+      unless any { $_ == $value } ($NORMAL, $ADMIN, $TEST);
   }
 
   method TO_JSON {
@@ -32,10 +32,10 @@ class Role {
 }
 
 class Status {
-  Readonly::Scalar our $none        => 0;
-  Readonly::Scalar our $unconfirmed => 1;
-  Readonly::Scalar our $active      => 2;
-  Readonly::Scalar our $inactive    => 3;
+  Readonly::Scalar our $NONE        => 0;
+  Readonly::Scalar our $UNCONFIRMED => 1;
+  Readonly::Scalar our $ACTIVE      => 2;
+  Readonly::Scalar our $INACTIVE    => 3;
 
   #<<V
   field $value :param :reader;
@@ -45,7 +45,7 @@ class Status {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
     croak 'value'
-      unless any { $_ == $value } ($unconfirmed, $active, $inactive);
+      unless any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE);
   }
 
   method TO_JSON {
@@ -67,12 +67,11 @@ class Meta {
     use Carp        qw( croak );
     use Crypt::Misc qw( is_v4uuid );
     my $now = time;
-    croak 'ctime' unless int($ctime) == $ctime && 0 <= $ctime <= $now;
-    croak 'mtime' unless int($mtime) == $mtime && 0 <= $mtime <= $now;
-    croak 'role'  unless $role isa Role;
+    croak 'ctime' if int($ctime) != $ctime || $ctime < 0 || $ctime > $now;
+    croak 'mtime' if int($mtime) != $mtime || $mtime < 0 || $mtime > $now;
+    croak 'role' unless $role isa Role;
     croak 'schema_version'
-      unless int($schema_version) == $schema_version
-      && $schema_version >= 0;
+      if int($schema_version) != $schema_version || $schema_version < 0;
     croak 'signature' unless is_v4uuid($signature);
     croak 'status'    unless $status isa Status;
   }
@@ -84,7 +83,7 @@ class Meta {
       role           => $role->TO_JSON,
       schema_version => $schema_version,
       signature      => $signature,
-      status         => $status->TO_JSON
+      status         => $status->TO_JSON,
     };
   }
 }
@@ -105,7 +104,7 @@ class Base {
   method TO_JSON {
     return {
       id   => $id,
-      meta => $meta->TO_JSON
+      meta => $meta->TO_JSON,
     };
   }
 }

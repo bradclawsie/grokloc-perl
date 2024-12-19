@@ -15,10 +15,10 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-    Env->new(value => $Env::unit);
-    Env->new(value => $Env::dev);
-    Env->new(value => $Env::stage);
-    Env->new(value => $Env::prod);
+    Env->new(value => $Env::UNIT);
+    Env->new(value => $Env::DEV);
+    Env->new(value => $Env::STAGE);
+    Env->new(value => $Env::PROD);
   },
 ) or note($EVAL_ERROR);
 
@@ -38,12 +38,12 @@ my $env;
 
 ok(
   lives {
-    $env = Env->new(value => $Env::unit);
+    $env = Env->new(value => $Env::UNIT);
   },
 ) or note($EVAL_ERROR);
 
 ok($env isa Env);
 my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
-is($Env::unit, $json->encode($env));
+is($Env::UNIT, $json->encode($env));
 
 done_testing;

@@ -10,11 +10,11 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Env {
-  Readonly::Scalar our $none  => -1;
-  Readonly::Scalar our $unit  => 0;
-  Readonly::Scalar our $dev   => 1;
-  Readonly::Scalar our $stage => 2;
-  Readonly::Scalar our $prod  => 3;
+  Readonly::Scalar our $NONE  => -1;
+  Readonly::Scalar our $UNIT  => 0;
+  Readonly::Scalar our $DEV   => 1;
+  Readonly::Scalar our $STAGE => 2;
+  Readonly::Scalar our $PROD  => 3;
 
   #<<V
   field $value :param :reader;
@@ -24,7 +24,7 @@ class Env {
     use Carp           qw( croak );
     use List::AllUtils qw( any );
     croak '$value malformed'
-      unless any { $_ == $value } ($unit, $dev, $stage, $prod);
+      unless any { $_ == $value } ($UNIT, $DEV, $STAGE, $PROD);
   }
 
   sub TO_JSON ($self) {

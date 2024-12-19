@@ -15,8 +15,8 @@ check:
     for i in $(find . -name \*.t); perl -Ilib -c $i; end
 
 critic:
-    find . -name \*.pm -print0 | xargs -0 perlcritic
-    find . -name \*.t -print0 | xargs -0 perlcritic --theme=tests
+    find . -name \*.pm -print0 | xargs -0 perlcritic --profile ./.perlcritic
+    find . -name \*.t -print0 | xargs -0 perlcritic --profile ./.perlcritic --theme=tests
 
 deps:
     cpanm -n \

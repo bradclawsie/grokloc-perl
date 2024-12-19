@@ -19,7 +19,7 @@ functions = :builtins
 exclude_functions = print say
 [Modules::ProhibitExcessMainComplexity]
 max_mccabe = 50
--Modules::ProhibitMultiplePackages]
+[-Modules::ProhibitMultiplePackages]
 [-Modules::RequireEndWithOne]
 [-Modules::RequireExplicitInclusion]
 [-Modules::RequireExplicitPackage]

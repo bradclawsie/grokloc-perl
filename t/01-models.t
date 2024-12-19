@@ -16,9 +16,9 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-    Role->new(value => $Role::normal);
-    Role->new(value => $Role::admin);
-    Role->new(value => $Role::test);
+    Role->new(value => $Role::NORMAL);
+    Role->new(value => $Role::ADMIN);
+    Role->new(value => $Role::TEST);
   },
 ) or note($EVAL_ERROR);
 
@@ -30,7 +30,7 @@ ok(
 
 ok(
   dies {
-    Role->new(value => $Role::none);
+    Role->new(value => $Role::NONE);
   },
 ) or note($EVAL_ERROR);
 
@@ -38,19 +38,19 @@ my $role;
 
 ok(
   lives {
-    $role = Role->new(value => $Role::normal);
+    $role = Role->new(value => $Role::NORMAL);
   },
 ) or note($EVAL_ERROR);
 
 ok($role isa Role);
 my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
-is($Role::normal, $json->encode($role));
+is($Role::NORMAL, $json->encode($role));
 
 ok(
   lives {
-    Status->new(value => $Status::unconfirmed);
-    Status->new(value => $Status::active);
-    Status->new(value => $Status::inactive);
+    Status->new(value => $Status::UNCONFIRMED);
+    Status->new(value => $Status::ACTIVE);
+    Status->new(value => $Status::INACTIVE);
   },
 ) or note($EVAL_ERROR);
 
@@ -62,7 +62,7 @@ ok(
 
 ok(
   dies {
-    Status->new(value => $Status::none);
+    Status->new(value => $Status::NONE);
   },
 ) or note($EVAL_ERROR);
 
@@ -70,12 +70,12 @@ my $status;
 
 ok(
   lives {
-    $status = Status->new(value => $Status::active);
+    $status = Status->new(value => $Status::ACTIVE);
   },
 ) or note($EVAL_ERROR);
 
 ok($status isa Status);
-is($Status::active, $json->encode($status));
+is($Status::ACTIVE, $json->encode($status));
 
 ok(
   lives {
