@@ -30,6 +30,15 @@ class VarChar {
     return false if ($s =~ /window[.]/msx);
     return true;
   }
+
+  ADJUST {
+    use Carp qw( croak );
+    croak 'varchar' unless varchar($value);
+  }
+
+  method TO_JSON {
+    return $value;
+  }
 }
 
 __END__
