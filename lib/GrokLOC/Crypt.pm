@@ -31,4 +31,26 @@ class IV {
   }
 }
 
+class Key {
+  Readonly::Scalar our $LEN           => 32;
+  Readonly::Scalar our $RAND_SIZE     => 500;
+  Readonly::Scalar our $RAND_STRENGTH => 1;
+  #<<V
+  field $value :param :reader;
+  #>>V
+
+  ADJUST {
+    use Carp qw( croak );
+    croak 'not key' unless ($value =~ /^[\da-f]{$LEN}$/x);
+  }
+
+  sub rand ($self) {
+    use Crypt::Random         qw( makerandom );
+    use Crypt::Digest::SHA256 qw( sha256_b64 );
+    my $r = makerandom(Size => $RAND_SIZE, Strength => $RAND_STRENGTH);
+    my $s = substr unpack('H*', sha256_b64($r)), 0, $LEN;
+    return $self->new(value => $s);
+  }
+}
+
 __END__
