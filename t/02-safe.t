@@ -8,7 +8,7 @@ use strictures 2;
 use lib '../lib';
 use GrokLOC::Safe;
 
-# ABSTRACT: test Models
+# ABSTRACT: test Safe
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
