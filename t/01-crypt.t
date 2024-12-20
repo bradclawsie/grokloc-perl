@@ -26,4 +26,18 @@ for my $fail ('', 'a' x ($IV::LEN + 1), 'x' x $IV::LEN) {
   ) or note($EVAL_ERROR);
 }
 
+ok(
+  lives {
+    Key->new(value => Key->rand()->value);
+  },
+) or note($EVAL_ERROR);
+
+for my $fail ('', 'a' x ($Key::LEN + 1), 'x' x $Key::LEN) {
+  ok(
+    dies {
+      Key->new(value => $fail);
+    },
+  ) or note($EVAL_ERROR);
+}
+
 done_testing;
