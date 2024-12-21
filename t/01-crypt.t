@@ -1,7 +1,7 @@
 package main;
 use v5.40;
 use English                 qw(-no_match_vars);
-use Test2::V0               qw( done_testing note ok );
+use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
 use strictures 2;
 use lib '../lib';
@@ -12,9 +12,11 @@ use GrokLOC::Crypt;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
 
+my $iv;
+
 ok(
   lives {
-    IV->new(value => IV->rand()->value);
+    $iv = IV->new(value => IV->rand()->value);
   },
 ) or note($EVAL_ERROR);
 
@@ -26,9 +28,11 @@ for my $fail ('', 'a' x ($IV::LEN + 1), 'x' x $IV::LEN) {
   ) or note($EVAL_ERROR);
 }
 
+my $key;
+
 ok(
   lives {
-    Key->new(value => Key->rand()->value);
+    $key = Key->new(value => Key->rand()->value);
   },
 ) or note($EVAL_ERROR);
 
@@ -39,5 +43,24 @@ for my $fail ('', 'a' x ($Key::LEN + 1), 'x' x $Key::LEN) {
     },
   ) or note($EVAL_ERROR);
 }
+
+my $s = 'hello';
+my $e;
+
+ok(
+  lives {
+    $e = AESGCM->encrypt($s, $key->value, $iv->value);
+  },
+) or note($EVAL_ERROR);
+
+my $pt;
+
+ok(
+  lives {
+    $pt = AESGCM->decrypt($e, $key->value);
+  },
+) or note($EVAL_ERROR);
+
+is($pt, $s);
 
 done_testing;
