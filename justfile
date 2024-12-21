@@ -23,8 +23,6 @@ deps:
         Carp \
         Cpanel::JSON::XS \
         CryptX \
-        Crypt::Digest::SHA256 \
-        Crypt::Random \
         English \
         List::AllUtils \
         Object::Pad \

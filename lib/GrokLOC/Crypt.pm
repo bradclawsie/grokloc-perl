@@ -21,9 +21,10 @@ class IV {
   }
 
   sub rand ($self) {
-    use Crypt::Random qw( makerandom );
-    my $s = substr makerandom(Size => 64, Strength => 1), 0, $LEN;
-    return $self->new(value => $s);
+    use Crypt::Misc qw( random_v4uuid );
+    my $s = random_v4uuid;
+    $s =~ s/\-//xg;
+    return $self->new(value => substr $s, 0, $LEN);
   }
 }
 
@@ -39,9 +40,10 @@ class Key {
   }
 
   sub rand ($self) {
-    use Crypt::Random qw( makerandom );
-    my $s = substr makerandom(Size => 128, Strength => 1), 0, $LEN;
-    return $self->new(value => $s);
+    use Crypt::Misc qw( random_v4uuid );
+    my $s = random_v4uuid;
+    $s =~ s/\-//xg;
+    return $self->new(value => substr $s, 0, $LEN);
   }
 }
 
