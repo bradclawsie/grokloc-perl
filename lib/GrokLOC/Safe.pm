@@ -10,7 +10,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class VarChar {
-
+  use Carp qw( croak );
   Readonly::Scalar our $STR_MAX => 8192;
   #<<V
   field $value :param :reader;
@@ -32,7 +32,6 @@ class VarChar {
   }
 
   ADJUST {
-    use Carp qw( croak );
     croak 'varchar' unless varchar($value);
   }
 

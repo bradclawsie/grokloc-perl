@@ -10,6 +10,8 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Role {
+  use Carp           qw( croak );
+  use List::AllUtils qw( any );
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;
   Readonly::Scalar our $ADMIN  => 2;
@@ -20,8 +22,6 @@ class Role {
   #>>V
 
   ADJUST {
-    use Carp           qw( croak );
-    use List::AllUtils qw( any );
     croak 'value'
       unless any { $_ == $value } ($NORMAL, $ADMIN, $TEST);
   }
@@ -32,6 +32,8 @@ class Role {
 }
 
 class Status {
+  use Carp           qw( croak );
+  use List::AllUtils qw( any );
   Readonly::Scalar our $NONE        => 0;
   Readonly::Scalar our $UNCONFIRMED => 1;
   Readonly::Scalar our $ACTIVE      => 2;
@@ -42,8 +44,6 @@ class Status {
   #>>V
 
   ADJUST {
-    use Carp           qw( croak );
-    use List::AllUtils qw( any );
     croak 'value'
       unless any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE);
   }
@@ -54,6 +54,8 @@ class Status {
 }
 
 class Meta {
+  use Carp        qw( croak );
+  use Crypt::Misc qw( is_v4uuid );
   #<<V
   field $ctime :param :reader;
   field $mtime :param :reader;
@@ -64,8 +66,6 @@ class Meta {
   #>>V
 
   ADJUST {
-    use Carp        qw( croak );
-    use Crypt::Misc qw( is_v4uuid );
     my $now = time;
     croak 'ctime' if int($ctime) != $ctime || $ctime < 0 || $ctime > $now;
     croak 'mtime' if int($mtime) != $mtime || $mtime < 0 || $mtime > $now;
@@ -89,14 +89,14 @@ class Meta {
 }
 
 class Base {
+  use Carp        qw( croak );
+  use Crypt::Misc qw( is_v4uuid );
   #<<V
   field $id :param :reader;
   field $meta :param :reader;
   #>>V
 
   ADJUST {
-    use Carp        qw( croak );
-    use Crypt::Misc qw( is_v4uuid );
     croak 'id'   unless is_v4uuid($id);
     croak 'meta' unless $meta isa Meta;
   }

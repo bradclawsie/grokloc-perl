@@ -63,4 +63,22 @@ ok(
 
 is($pt, $s);
 
+my $pw;
+
+ok(
+  lives {
+    Password->new(value => Password->rand()->value);
+    $pw = Password->from($s);
+    Password->new(value => $pw->value);
+  },
+) or note($EVAL_ERROR);
+
+ok($pw->test($s));
+
+ok(
+  dies {
+    Password->new(value => $s);
+  },
+) or note($EVAL_ERROR);
+
 done_testing;

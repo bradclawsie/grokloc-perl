@@ -23,6 +23,7 @@ deps:
         Carp \
         Cpanel::JSON::XS \
         CryptX \
+        Crypt::Argon2 \
         English \
         List::AllUtils \
         Object::Pad \

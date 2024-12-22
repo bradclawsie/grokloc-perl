@@ -10,6 +10,8 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Env {
+  use Carp           qw( croak );
+  use List::AllUtils qw( any );
   Readonly::Scalar our $NONE  => -1;
   Readonly::Scalar our $UNIT  => 0;
   Readonly::Scalar our $DEV   => 1;
@@ -21,9 +23,7 @@ class Env {
   #>>V
 
   ADJUST {
-    use Carp           qw( croak );
-    use List::AllUtils qw( any );
-    croak '$value malformed'
+    croak 'bad env'
       unless any { $_ == $value } ($UNIT, $DEV, $STAGE, $PROD);
   }
 
