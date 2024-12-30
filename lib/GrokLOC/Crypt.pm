@@ -11,7 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class IV {
   use Carp        qw( croak );
-  use Crypt::Misc qw( random_v4uuid );
+  use Crypt::Misc qw( is_v4uuid random_v4uuid );
   Readonly::Scalar our $LEN => 16;
   #<<V
   field $value :param :reader;
@@ -30,7 +30,7 @@ class IV {
 
 class Key {
   use Carp        qw( croak );
-  use Crypt::Misc qw( random_v4uuid );
+  use Crypt::Misc qw( is_v4uuid random_v4uuid );
   Readonly::Scalar our $LEN => 32;
   #<<V
   field $value :param :reader;
@@ -74,7 +74,7 @@ class AESGCM {
 class Password {
   use Carp          qw( croak );
   use Crypt::Argon2 qw( argon2_verify argon2id_pass );
-  use Crypt::Misc   qw( random_v4uuid );
+  use Crypt::Misc   qw( is_v4uuid random_v4uuid );
 
   Readonly::Scalar our $SALT_LEN => 16;
   #<<V
@@ -102,6 +102,38 @@ class Password {
 
   method TO_JSON {    # never serialize
     return '*****';
+  }
+}
+
+class VersionKey {
+  use Carp        qw( croak );
+  use Crypt::Misc qw( is_v4uuid random_v4uuid );
+
+  #<<V
+  field $key_map :param ;
+  field $current :param ;
+  #>>V
+
+  ADJUST {
+    croak 'key_map not hash' unless ref($key_map) eq 'HASH';
+    croak 'current not uuid' unless is_v4uuid($current);
+    my $found_current = false;
+    for my $key (keys %{$key_map}) {
+      croak 'key_map key not uuid'           unless is_v4uuid($key);
+      croak 'key_map value not Key instance' unless $key_map->{$key} isa 'Key';
+      $found_current = true if $key eq $current;
+    }
+    croak 'current not set in key_map' unless $found_current;
+  }
+
+  method get ($key) {
+    my $value = $key_map->{$key};
+    croak 'no Key found' unless defined $value;
+    return $value;
+  }
+
+  method get_current {
+    return get($current);
   }
 }
 

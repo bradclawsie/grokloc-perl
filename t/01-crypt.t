@@ -81,4 +81,16 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok(
+  dies {
+    VersionKey->new();
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    VersionKey->new(key_map => 1);
+  },
+) or note($EVAL_ERROR);
+
 done_testing;
