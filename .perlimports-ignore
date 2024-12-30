@@ -1,3 +1,4 @@
+Carp::Assert::More
 GrokLOC::Crypt
 GrokLOC::Env
 GrokLOC::Models

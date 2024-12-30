@@ -10,15 +10,17 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class IV {
-  use Carp        qw( croak );
-  use Crypt::Misc qw( is_v4uuid random_v4uuid );
+  use Carp::Assert::More qw( assert_like );
+  use Crypt::Misc        qw( is_v4uuid random_v4uuid );
+
   Readonly::Scalar our $LEN => 16;
+
   #<<V
   field $value :param :reader;
   #>>V
 
   ADJUST {
-    croak 'not iv' unless ($value =~ /^[\da-f]{$LEN}$/x);
+    assert_like($value, qr/^[\da-f]{$LEN}$/x, 'not iv');
   }
 
   sub rand ($self) {
@@ -29,15 +31,17 @@ class IV {
 }
 
 class Key {
-  use Carp        qw( croak );
-  use Crypt::Misc qw( is_v4uuid random_v4uuid );
+  use Carp::Assert::More qw( assert_like );
+  use Crypt::Misc        qw( is_v4uuid random_v4uuid );
+
   Readonly::Scalar our $LEN => 32;
+
   #<<V
   field $value :param :reader;
   #>>V
 
   ADJUST {
-    croak 'not key' unless ($value =~ /^[\da-f]{$LEN}$/x);
+    assert_like($value, qr/^[\da-f]{$LEN}$/x, 'not key');
   }
 
   sub rand ($self) {
@@ -48,8 +52,9 @@ class Key {
 }
 
 class AESGCM {
-  use Carp                qw( croak );
+  use Carp::Assert::More  qw( assert_is );
   use Crypt::AuthEnc::GCM ();
+
   Readonly::Scalar our $TAG_LEN => 32;
 
   sub encrypt ($self, $pt, $key, $iv) {
@@ -66,23 +71,24 @@ class AESGCM {
     my $ae      = Crypt::AuthEnc::GCM->new('AES', $key, $iv);
     my $pt      = $ae->decrypt_add(pack('H*', $ct));
     my $tag_out = $ae->decrypt_done();
-    croak 'tag mismatch' unless unpack('H*', $tag_out) eq $tag;
+    assert_is(unpack('H*', $tag_out), $tag, 'tag mismatch');
     return $pt;
   }
 }
 
 class Password {
-  use Carp          qw( croak );
-  use Crypt::Argon2 qw( argon2_verify argon2id_pass );
-  use Crypt::Misc   qw( is_v4uuid random_v4uuid );
+  use Carp::Assert::More qw( assert_like );
+  use Crypt::Argon2      qw( argon2_verify argon2id_pass );
+  use Crypt::Misc        qw( is_v4uuid random_v4uuid );
 
   Readonly::Scalar our $SALT_LEN => 16;
+
   #<<V
   field $value :param :reader;
   #>>V
 
   ADJUST {
-    croak 'not argon2 password' unless ($value =~ /^\$argon2/x);
+    assert_like($value, qr/\$argon2/x, 'password not argon2')
   }
 
   sub from ($self, $pt) {
@@ -106,7 +112,12 @@ class Password {
 }
 
 class VersionKey {
-  use Carp        qw( croak );
+  use Carp::Assert::More qw(
+    assert
+    assert_defined
+    assert_hashref
+    assert_isa
+  );
   use Crypt::Misc qw( is_v4uuid random_v4uuid );
 
   #<<V
@@ -115,20 +126,20 @@ class VersionKey {
   #>>V
 
   ADJUST {
-    croak 'key_map not hash' unless ref($key_map) eq 'HASH';
-    croak 'current not uuid' unless is_v4uuid($current);
+    assert_hashref($key_map, 'key_map not hashref');
+    assert(is_v4uuid($current), 'current not uuidv4');
     my $found_current = false;
     for my $key (keys %{$key_map}) {
-      croak 'key_map key not uuid'           unless is_v4uuid($key);
-      croak 'key_map value not Key instance' unless $key_map->{$key} isa 'Key';
+      assert(is_v4uuid($key), 'key_map key not uuidv4');
+      assert_isa($key_map->{$key}, 'Key', 'key_map value not type Key');
       $found_current = true if $key eq $current;
     }
-    croak 'current not set in key_map' unless $found_current;
+    assert($found_current, 'current key not in key_map');
   }
 
   method get ($key) {
     my $value = $key_map->{$key};
-    croak 'no Key found' unless defined $value;
+    assert_defined($value, 'no value for key in key_map');
     return $value;
   }
 
