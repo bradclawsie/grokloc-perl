@@ -1,5 +1,6 @@
 package main;
 use v5.40;
+use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
@@ -92,5 +93,38 @@ ok(
     VersionKey->new(key_map => 1);
   },
 ) or note($EVAL_ERROR);
+
+my $current = random_v4uuid;
+my %key_map = ($current => $key, random_v4uuid() => Key->rand());
+
+ok(
+  dies {
+    VersionKey->new(key_map => \%key_map);
+  },
+) or note($EVAL_ERROR);
+
+my $version_key;
+
+ok(
+  lives {
+    $version_key = VersionKey->new(key_map => \%key_map, current => $current);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    $version_key->get(random_v4uuid());
+  },
+) or note($EVAL_ERROR);
+
+my $get_key;
+
+ok(
+  lives {
+    $get_key = $version_key->get($current);
+  },
+) or note($EVAL_ERROR);
+
+is($get_key->value, $key->value);
 
 done_testing;
