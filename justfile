@@ -21,6 +21,7 @@ critic:
 deps:
     cpanm -n \
         Carp \
+        Carp::Assert::More \
         Cpanel::JSON::XS \
         CryptX \
         Crypt::Argon2 \
