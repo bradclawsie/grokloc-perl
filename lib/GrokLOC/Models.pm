@@ -12,6 +12,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class Role {
   use Carp           qw( croak );
   use List::AllUtils qw( any );
+  
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;
   Readonly::Scalar our $ADMIN  => 2;
@@ -34,6 +35,7 @@ class Role {
 class Status {
   use Carp           qw( croak );
   use List::AllUtils qw( any );
+
   Readonly::Scalar our $NONE        => 0;
   Readonly::Scalar our $UNCONFIRMED => 1;
   Readonly::Scalar our $ACTIVE      => 2;
@@ -56,6 +58,7 @@ class Status {
 class Meta {
   use Carp        qw( croak );
   use Crypt::Misc qw( is_v4uuid );
+
   #<<V
   field $ctime :param :reader;
   field $mtime :param :reader;
@@ -91,6 +94,7 @@ class Meta {
 class Base {
   use Carp        qw( croak );
   use Crypt::Misc qw( is_v4uuid );
+
   #<<V
   field $id :param :reader;
   field $meta :param :reader;
