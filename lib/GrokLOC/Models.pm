@@ -23,7 +23,7 @@ class Role {
   #>>V
 
   ADJUST {
-    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST));
+    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
   }
 
   method TO_JSON {
@@ -45,7 +45,7 @@ class Status {
   #>>V
 
   ADJUST {
-    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE));
+    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
   }
 
   method TO_JSON {
@@ -75,7 +75,7 @@ class Meta {
         && $mtime >= 0
         && $mtime >= $ctime
         && $mtime <= $now,
-      'mtime'
+      'mtime',
     );
     assert_isa($role, 'Role', 'role is not type Role');
     assert_numeric($schema_version, 'schema_version');

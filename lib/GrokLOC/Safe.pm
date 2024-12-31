@@ -10,8 +10,10 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class VarChar {
-  use Carp qw( croak );
+  use Carp::Assert::More qw( assert );
+
   Readonly::Scalar our $STR_MAX => 8192;
+
   #<<V
   field $value :param :reader;
   #>>V
@@ -32,7 +34,7 @@ class VarChar {
   }
 
   ADJUST {
-    croak 'varchar' unless varchar($value);
+    assert(varchar($value), 'value not varchar');
   }
 
   method TO_JSON {
