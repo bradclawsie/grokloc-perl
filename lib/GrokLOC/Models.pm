@@ -10,9 +10,9 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Role {
-  use Carp           qw( croak );
-  use List::AllUtils qw( any );
-  
+  use Carp::Assert::More qw( assert );
+  use List::AllUtils     qw( any );
+
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;
   Readonly::Scalar our $ADMIN  => 2;
@@ -23,8 +23,7 @@ class Role {
   #>>V
 
   ADJUST {
-    croak 'value'
-      unless any { $_ == $value } ($NORMAL, $ADMIN, $TEST);
+    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST));
   }
 
   method TO_JSON {
@@ -33,8 +32,8 @@ class Role {
 }
 
 class Status {
-  use Carp           qw( croak );
-  use List::AllUtils qw( any );
+  use Carp::Assert::More qw( assert );
+  use List::AllUtils     qw( any );
 
   Readonly::Scalar our $NONE        => 0;
   Readonly::Scalar our $UNCONFIRMED => 1;
@@ -46,8 +45,7 @@ class Status {
   #>>V
 
   ADJUST {
-    croak 'value'
-      unless any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE);
+    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE));
   }
 
   method TO_JSON {
@@ -92,8 +90,8 @@ class Meta {
 }
 
 class Base {
-  use Carp        qw( croak );
-  use Crypt::Misc qw( is_v4uuid );
+  use Carp::Assert::More qw( assert assert_isa );
+  use Crypt::Misc        qw( is_v4uuid );
 
   #<<V
   field $id :param :reader;
@@ -101,8 +99,8 @@ class Base {
   #>>V
 
   ADJUST {
-    croak 'id'   unless is_v4uuid($id);
-    croak 'meta' unless $meta isa Meta;
+    assert(is_v4uuid($id), 'id not uuidv4');
+    assert_isa($meta, 'Meta', 'meta not type Meta');
   }
 
   method TO_JSON {
