@@ -134,11 +134,11 @@ ok(
 ) or note($EVAL_ERROR);
 
 ok(
-  dies {
+  lives {
     my $now = time;
     Meta->new(
-      ctime          => $now,
-      mtime          => $now + 1000,
+      ctime          => $now - 1000,
+      mtime          => $now - 100,
       role           => $role,
       schema_version => 0,
       signature      => random_v4uuid,

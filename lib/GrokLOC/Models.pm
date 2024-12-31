@@ -54,7 +54,8 @@ class Status {
 }
 
 class Meta {
-  use Carp        qw( croak );
+  use Carp::Assert::More
+    qw( assert assert_isa assert_nonnegative assert_numeric );
   use Crypt::Misc qw( is_v4uuid );
 
   #<<V
@@ -68,13 +69,19 @@ class Meta {
 
   ADJUST {
     my $now = time;
-    croak 'ctime' if int($ctime) != $ctime || $ctime < 0 || $ctime > $now;
-    croak 'mtime' if int($mtime) != $mtime || $mtime < 0 || $mtime > $now;
-    croak 'role' unless $role isa Role;
-    croak 'schema_version'
-      if int($schema_version) != $schema_version || $schema_version < 0;
-    croak 'signature' unless is_v4uuid($signature);
-    croak 'status'    unless $status isa Status;
+    assert(int($ctime) == $ctime && $ctime >= 0 && $ctime <= $now, 'ctime');
+    assert(
+      int($mtime) == $mtime
+        && $mtime >= 0
+        && $mtime >= $ctime
+        && $mtime <= $now,
+      'mtime'
+    );
+    assert_isa($role, 'Role', 'role is not type Role');
+    assert_numeric($schema_version, 'schema_version');
+    assert_nonnegative($schema_version, 'schema_version');
+    assert(is_v4uuid($signature), 'signature not uuidv4');
+    assert_isa($status, 'Status', 'status not type Status');
   }
 
   method TO_JSON {
