@@ -223,6 +223,33 @@ ok(
 
 ok(
   lives {
+    ID->new(value => random_v4uuid());
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    ID->new(value => undef);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    ID->new(value => '');
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
+    my $json =
+      Cpanel::JSON::XS->new->convert_blessed([true])->allow_nonref([true]);
+    ID->new(
+      value => $json->decode($json->encode(ID->new(value => random_v4uuid()))));
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
     my $now = time;
     Base->new(
       id   => random_v4uuid,

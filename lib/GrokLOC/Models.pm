@@ -96,6 +96,23 @@ class Meta {
   }
 }
 
+class ID {
+  use Carp::Assert::More qw( assert );
+  use Crypt::Misc        qw( is_v4uuid );
+
+  #<<V
+  field $value :param :reader;
+  #>>V
+
+  ADJUST {
+    assert(is_v4uuid($value), 'value not uuidv4');
+  }
+
+  method TO_JSON {
+    return $value;
+  }
+}
+
 class Base {
   use Carp::Assert::More qw( assert assert_isa );
   use Crypt::Misc        qw( is_v4uuid );
