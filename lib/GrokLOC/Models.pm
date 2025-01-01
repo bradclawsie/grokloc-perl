@@ -114,8 +114,7 @@ class ID {
 }
 
 class Base {
-  use Carp::Assert::More qw( assert assert_isa );
-  use Crypt::Misc        qw( is_v4uuid );
+  use Carp::Assert::More qw( assert_isa );
 
   #<<V
   field $id :param :reader;
@@ -123,13 +122,13 @@ class Base {
   #>>V
 
   ADJUST {
-    assert(is_v4uuid($id), 'id not uuidv4');
+    assert_isa($id,   'ID',   'id not type ID');
     assert_isa($meta, 'Meta', 'meta not type Meta');
   }
 
   method TO_JSON {
     return {
-      id   => $id,
+      id   => $id->TO_JSON,
       meta => $meta->TO_JSON,
     };
   }

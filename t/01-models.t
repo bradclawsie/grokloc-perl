@@ -252,7 +252,7 @@ ok(
   lives {
     my $now = time;
     Base->new(
-      id   => random_v4uuid,
+      id   => ID->new(value => random_v4uuid()),
       meta => Meta->new(
         ctime          => $now,
         mtime          => $now,
@@ -286,7 +286,7 @@ ok(
   dies {
     my $now = time;
     Base->new(
-      id   => random_v4uuid,
+      id   => ID->new(value => random_v4uuid()),
       meta => undef
     );
   },
@@ -298,7 +298,7 @@ ok(
     $json->decode(
       $json->encode(
         Base->new(
-          id   => random_v4uuid,
+          id   => ID->new(value => random_v4uuid()),
           meta => Meta->new(
             ctime          => $now,
             mtime          => $now,
