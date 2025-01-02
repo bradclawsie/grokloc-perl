@@ -3,6 +3,7 @@ use v5.40;
 use strictures 2;
 use Object::Pad;
 use lib '../../../lib';
+use GrokLOC::Models;
 use GrokLOC::Safe;
 
 # ABSTRACT: Organization model support.
@@ -14,11 +15,15 @@ class Org {
   use Carp::Assert::More qw( assert_isa );
 
   #<<V
+  field $id :param :reader;
+  field $meta :param :reader;
   field $name :param :reader;
   field $owner :param :reader;
   #>>V
 
   ADJUST {
+    assert_isa($id,    'ID',      'id is not type ID');
+    assert_isa($meta,  'Meta',    'meta is not type Meta');
     assert_isa($name,  'VarChar', 'name is not type VarChar');
     assert_isa($owner, 'ID',      'owner is not type ID');
   }
