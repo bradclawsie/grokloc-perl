@@ -6,6 +6,8 @@ use Test2::Tools::Exception qw( lives );
 use strictures 2;
 use lib '../lib';
 use GrokLOC::Models;
+use GrokLOC::Safe;
+use GrokLOC::App::Admin::Org;
 
 # ABSTRACT: test Org
 
@@ -14,7 +16,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-
+    Org->new(name => VarChar->rand(), owner => ID->rand());
   },
 ) or note($EVAL_ERROR);
 

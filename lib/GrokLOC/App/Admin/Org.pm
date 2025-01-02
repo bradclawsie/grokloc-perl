@@ -3,7 +3,6 @@ use v5.40;
 use strictures 2;
 use Object::Pad;
 use lib '../../../lib';
-use GrokLOC::Models;
 use GrokLOC::Safe;
 
 # ABSTRACT: Organization model support.
@@ -11,7 +10,7 @@ use GrokLOC::Safe;
 our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
-class Org :isa(Base) {
+class Org {
   use Carp::Assert::More qw( assert_isa );
 
   #<<V
