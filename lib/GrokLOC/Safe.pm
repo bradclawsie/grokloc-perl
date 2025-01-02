@@ -11,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class VarChar {
   use Carp::Assert::More qw( assert );
+  use Crypt::Misc        qw( random_v4uuid );
 
   Readonly::Scalar our $STR_MAX => 8192;
 
@@ -31,6 +32,10 @@ class VarChar {
     return false if ($s =~ /\&lt\;/imsx);
     return false if ($s =~ /window[.]/msx);
     return true;
+  }
+
+  sub rand ($self) {
+    return $self->new(value => random_v4uuid());
   }
 
   ADJUST {

@@ -15,6 +15,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
+    VarChar->rand();
     VarChar->new(value => random_v4uuid);
     VarChar->new(value => '.' x $VarChar::STR_MAX);
   },
