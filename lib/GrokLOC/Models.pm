@@ -56,7 +56,7 @@ class Status {
 class Meta {
   use Carp::Assert::More
     qw( assert assert_isa assert_nonnegative assert_numeric );
-  use Crypt::Misc qw( is_v4uuid );
+  use Crypt::Misc qw( is_v4uuid random_v4uuid );
 
   #<<V
   field $ctime :param :reader;
@@ -98,11 +98,15 @@ class Meta {
 
 class ID {
   use Carp::Assert::More qw( assert );
-  use Crypt::Misc        qw( is_v4uuid );
+  use Crypt::Misc        qw( is_v4uuid random_v4uuid );
 
   #<<V
   field $value :param :reader;
   #>>V
+
+  sub rand ($self) {
+    return $self->new(value => random_v4uuid());
+  }
 
   ADJUST {
     assert(is_v4uuid($value), 'value not uuidv4');

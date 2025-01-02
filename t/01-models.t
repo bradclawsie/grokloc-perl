@@ -223,6 +223,7 @@ ok(
 
 ok(
   lives {
+    ID->rand();
     ID->new(value => random_v4uuid());
   },
 ) or note($EVAL_ERROR);

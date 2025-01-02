@@ -7,11 +7,15 @@ use strictures 2;
 use lib '../lib';
 use GrokLOC::Models;
 
-# ABSTRACT: test Models
+# ABSTRACT: test Org
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
 
-ok(lives {},) or note($EVAL_ERROR);
+ok(
+  lives {
+
+  },
+) or note($EVAL_ERROR);
 
 done_testing;
