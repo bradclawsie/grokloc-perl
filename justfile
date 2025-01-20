@@ -20,16 +20,25 @@ critic:
 
 deps:
     cpanm -n \
+        bareword::filehandles \
         Carp \
         Carp::Assert::More \
+        Clone \
         Cpanel::JSON::XS \
         CryptX \
         Crypt::Argon2 \
+        Data::UUID \
         English \
+        indirect \
         List::AllUtils \
+        multidimensional \
         Object::Pad \
+        Params::Util \
+        Params::Validate \
         Perl::Critic \
+        Pod::PlainText \
         strictures \
+        Sub::Identify \
         Readonly \
         Test2::Harness \
         Test2::Suite
