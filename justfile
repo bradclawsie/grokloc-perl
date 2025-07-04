@@ -27,6 +27,7 @@ deps:
         Cpanel::JSON::XS \
         CryptX \
         Crypt::Argon2 \
+        Crypt::JWT \
         Data::UUID \
         English \
         indirect \
