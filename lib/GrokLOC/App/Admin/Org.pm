@@ -2,9 +2,6 @@ package GrokLOC::App::Admin::Org;
 use v5.40;
 use strictures 2;
 use Object::Pad;
-use lib '../../../lib';
-use GrokLOC::Models;
-use GrokLOC::Safe;
 
 # ABSTRACT: Organization model support.
 
@@ -13,6 +10,9 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Org {
   use Carp::Assert::More qw( assert_isa );
+  use lib '../../../../lib';
+  use GrokLOC::Models;
+  use GrokLOC::Safe;
 
   #<<V
   field $id :param :reader;

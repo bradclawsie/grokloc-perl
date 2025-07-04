@@ -31,3 +31,5 @@ class Env {
     return $self->value;
   }
 }
+
+__END__

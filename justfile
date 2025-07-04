@@ -33,6 +33,7 @@ deps:
         indirect \
         List::AllUtils \
         multidimensional \
+        Net::IP \
         Object::Pad \
         Params::Util \
         Params::Validate \
