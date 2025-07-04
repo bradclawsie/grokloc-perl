@@ -2,18 +2,14 @@ severity = 1
 [-Bangs::ProhibitNumberedNames]
 [-BuiltinFunctions::ProhibitUniversalIsa]
 [-CodeLayout::ProhibitParensWithBuiltins]
-[-CodeLayout::RequireFinalSemicolon]
 [-CodeLayout::RequireTidyCode]
 [-Community::DiscouragedModules]
 [-Community::PreferredAlternatives]
-[-Compatibility::PodMinimumVersion]
 [-ControlStructures::ProhibitCascadingIfElse]
 [ControlStructures::ProhibitPostfixControls]
 allow = for if unless
 [-ControlStructures::ProhibitUnlessBlocks]
 [-Documentation::RequirePodSections]
-[-Freenode::DiscouragedModules]
-[-Freenode::PreferredAlternatives]
 [InputOutput::RequireCheckedSyscalls]
 functions = :builtins
 exclude_functions = print say
