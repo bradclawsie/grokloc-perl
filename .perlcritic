@@ -21,6 +21,7 @@ max_mccabe = 50
 [-Modules::RequireExplicitPackage]
 [NamingConventions::ProhibitAmbiguousNames]
 forbid = abstract bases close contract last left no record right second
+[-RegularExpressions::ProhibitComplexRegexes]
 [-RegularExpressions::RequireDotMatchAnything]
 [-RegularExpressions::RequireLineBoundaryMatching]
 [-Subroutines::ProhibitBuiltinHomonyms]
@@ -39,3 +40,5 @@ allowed_values = -1000..1000
 [-ValuesAndExpressions::ProhibitVersionStrings]
 [-ValuesAndExpressions::ProhibitLongChainsOfMethodCalls]
 [-ValuesAndExpressions::RequireInterpolationOfMetachars]
+[Variables::ProhibitPunctuationVars]
+allow = $@ $! ${^CAPTURE}

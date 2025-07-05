@@ -104,12 +104,10 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
-my ($token, $token_out);
-
 ok(
   lives {
-    my $now = time;
-    $token = JWT->new(
+    my $now   = time;
+    my $token = JWT->new(
       exp => $now + 86400,
       nbf => $now - 86400,
       iss => 'GrokLOC.com',
@@ -119,18 +117,15 @@ ok(
 
     my $signing_key = random_v4uuid;
     my $encoded     = $token->encode($signing_key);
-    $token_out = JWT->decode($encoded, $signing_key);
+    is($token, JWT->decode($encoded, $signing_key));
   },
 ) or note($EVAL_ERROR);
-
-# encode, decode round trip
-is($token, $token_out);
 
 ok(
   # decode with the wrong signing_key
   dies {
-    my $now = time;
-    $token = JWT->new(
+    my $now   = time;
+    my $token = JWT->new(
       exp => $now + 86400,
       nbf => $now - 86400,
       iss => 'GrokLOC.com',
@@ -140,7 +135,7 @@ ok(
 
     my $signing_key = random_v4uuid;
     my $encoded     = $token->encode($signing_key);
-    $token_out = JWT->decode($encoded, random_v4uuid);
+    JWT->decode($encoded, random_v4uuid);
   },
 ) or note($EVAL_ERROR);
 
@@ -154,8 +149,8 @@ ok(
 ok(
   # round trip as headers
   lives {
-    my $now = time;
-    $token = JWT->new(
+    my $now   = time;
+    my $token = JWT->new(
       exp => $now + 86400,
       nbf => $now - 86400,
       iss => 'GrokLOC.com',
@@ -165,12 +160,9 @@ ok(
 
     my $signing_key = random_v4uuid;
     my $header      = $token->to_header($signing_key);
-    $token_out = JWT->from_header($header, $signing_key);
+    is($token, JWT->from_header($header, $signing_key));
   },
 ) or note($EVAL_ERROR);
-
-# header encode, decode round trip
-is($token, $token_out);
 
 ok(
   # decode bad input
