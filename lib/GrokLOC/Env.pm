@@ -2,7 +2,6 @@ package GrokLOC::Env;
 use v5.40;
 use strictures 2;
 use Object::Pad;
-use Readonly ();
 
 # ABSTRACT: Describe the execution environment.
 
@@ -12,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class Env {
   use Carp::Assert::More qw (assert);
   use List::AllUtils     qw( any );
+  use Readonly           ();
 
   Readonly::Scalar our $NONE  => -1;
   Readonly::Scalar our $UNIT  => 0;

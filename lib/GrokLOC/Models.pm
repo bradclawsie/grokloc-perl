@@ -2,7 +2,6 @@ package GrokLOC::Models;
 use v5.40;
 use strictures 2;
 use Object::Pad;
-use Readonly ();
 
 # ABSTRACT: Core types relevant to all model instances.
 
@@ -12,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class Role {
   use Carp::Assert::More qw( assert );
   use List::AllUtils     qw( any );
+  use Readonly           ();
 
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;

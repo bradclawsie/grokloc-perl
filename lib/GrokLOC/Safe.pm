@@ -2,7 +2,6 @@ package GrokLOC::Safe;
 use v5.40;
 use strictures 2;
 use Object::Pad;
-use Readonly ();
 
 # ABSTRACT: Safe types for database use.
 
@@ -12,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class VarChar {
   use Carp::Assert::More qw( assert );
   use Crypt::Misc        qw( random_v4uuid );
+  use Readonly           ();
 
   Readonly::Scalar our $STR_MAX => 8192;
 
