@@ -29,6 +29,8 @@ deps:
         Crypt::Argon2 \
         Crypt::JWT \
         Data::UUID \
+        DBI \
+        DBD::Pg \
         English \
         indirect \
         List::AllUtils \

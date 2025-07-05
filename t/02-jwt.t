@@ -1,0 +1,182 @@
+package main;
+use v5.40;
+use Crypt::Misc             qw( random_v4uuid );
+use English                 qw(-no_match_vars);
+use Test2::V0               qw( done_testing is note ok );
+use Test2::Tools::Exception qw( dies lives );
+use strictures 2;
+use lib '../lib';
+use GrokLOC::App::JWT;
+use GrokLOC::Models;
+
+# ABSTRACT: test App::JWT
+
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:bclawsie';
+
+ok(
+  lives {
+    my $now   = time;
+    my $token = JWT->new(
+      exp => $now,
+      nbf => $now,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # exp fails
+  dies {
+    my $now = time;
+    JWT->new(
+      exp => $now - 10,
+      nbf => $now,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # nbf fails
+  dies {
+    my $now = time;
+    JWT->new(
+      exp => $now,
+      nbf => $now + 10,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # sub fails
+  dies {
+    my $now = time;
+    JWT->new(
+      exp => $now,
+      nbf => $now,
+      iss => 'GrokLOC.com',
+      sub => '',
+      cip => '127.0.0.1'
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # iss fails
+  dies {
+    my $now = time;
+    JWT->new(
+      exp => $now,
+      nbf => $now,
+      iss => '',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # cip fails
+  dies {
+    my $now = time;
+    JWT->new(
+      exp => $now,
+      nbf => $now,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => 0
+    );
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # missing fields
+  dies {
+    JWT->new;
+  },
+) or note($EVAL_ERROR);
+
+my ($token, $token_out);
+
+ok(
+  lives {
+    my $now = time;
+    $token = JWT->new(
+      exp => $now + 86400,
+      nbf => $now - 86400,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+
+    my $signing_key = random_v4uuid;
+    my $encoded     = $token->encode($signing_key);
+    $token_out = JWT->decode($encoded, $signing_key);
+  },
+) or note($EVAL_ERROR);
+
+# encode, decode round trip
+is($token, $token_out);
+
+ok(
+  # decode with the wrong signing_key
+  dies {
+    my $now = time;
+    $token = JWT->new(
+      exp => $now + 86400,
+      nbf => $now - 86400,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+
+    my $signing_key = random_v4uuid;
+    my $encoded     = $token->encode($signing_key);
+    $token_out = JWT->decode($encoded, random_v4uuid);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # decode bad input
+  dies {
+    JWT->decode('', random_v4uuid);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  # round trip as headers
+  lives {
+    my $now = time;
+    $token = JWT->new(
+      exp => $now + 86400,
+      nbf => $now - 86400,
+      iss => 'GrokLOC.com',
+      sub => ID->rand,
+      cip => '127.0.0.1'
+    );
+
+    my $signing_key = random_v4uuid;
+    my $header      = $token->to_header($signing_key);
+    $token_out = JWT->from_header($header, $signing_key);
+  },
+) or note($EVAL_ERROR);
+
+# header encode, decode round trip
+is($token, $token_out);
+
+ok(
+  # decode bad input
+  dies {
+    JWT->from_header('', random_v4uuid);
+  },
+) or note($EVAL_ERROR);
+
+done_testing;

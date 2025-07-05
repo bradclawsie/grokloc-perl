@@ -2,7 +2,6 @@ package GrokLOC::Crypt;
 use v5.40;
 use strictures 2;
 use Object::Pad;
-use Readonly ();
 
 # ABSTRACT: Cryptographic utilities.
 
@@ -12,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class IV {
   use Carp::Assert::More qw( assert_like );
   use Crypt::Misc        qw( is_v4uuid random_v4uuid );
+  use Readonly           ();
 
   Readonly::Scalar our $LEN => 16;
 
