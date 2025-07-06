@@ -7,6 +7,14 @@ on:
 jobs:
   CI:
     runs-on: ubuntu-24.04
+    env:
+      PGHOST: localhost
+      PGDATABASE: app
+      PGUSERNAME: grokloc
+      PGPASSWORD: grokloc
+      POSTGRES_APP_URL: postgres://grokloc:grokloc@localhost:5432/app
+      DATABASE_URL: postgres://grokloc_root:grokloc@localhost:5432/app
+      REPOSITORY_BASE: /tmp
 
     steps:
     - name: Checkout code
@@ -20,7 +28,18 @@ jobs:
     - name: System dependencies
       run: |
         sudo apt update
+        # openssl, pkg-config, postgresql
+        # already installed in github ubuntu    
         sudo apt install -y build-essential ca-certificates fish git just libgit2-dev libpq-dev libssl3 libssl-dev zlib1g-dev
+
+    - name: initialize db
+      run: |
+          sudo systemctl start postgresql.service && sleep 3
+          git clone https://github.com/grokloc/grokloc-db.git
+          pushd grokloc-db
+          just create-users create-databases alter-grants apply-schema
+          popd
+          rm -rf grokloc-db
 
     - name: Perl Version
       run: perl --version

@@ -49,4 +49,21 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+die '$POSTGRES_APP_URL not set' unless $ENV{POSTGRES_APP_URL};
+
+ok(
+  lives {
+    my $st = State->new(
+      api_version=>1,
+      master_dsn=>$ENV{POSTGRES_APP_URL},
+      replica_dsns=>[$ENV{POSTGRES_APP_URL}],
+    );
+
+    is($st->master->ping, 1, 'master ping');
+    for my $replica (@{$st->replicas}) {
+      is($replica->ping, 1, 'replica ping');
+    }
+  },
+) or note($EVAL_ERROR);
+
 done_testing;

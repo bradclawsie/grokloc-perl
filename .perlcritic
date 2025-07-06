@@ -40,5 +40,7 @@ allowed_values = -1000..1000
 [-ValuesAndExpressions::ProhibitVersionStrings]
 [-ValuesAndExpressions::ProhibitLongChainsOfMethodCalls]
 [-ValuesAndExpressions::RequireInterpolationOfMetachars]
+[Variables::ProhibitPackageVars]
+add_packages = DBI
 [Variables::ProhibitPunctuationVars]
 allow = $@ $! ${^CAPTURE}
