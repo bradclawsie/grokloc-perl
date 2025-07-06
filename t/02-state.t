@@ -54,9 +54,9 @@ die '$POSTGRES_APP_URL not set' unless $ENV{POSTGRES_APP_URL};
 ok(
   lives {
     my $st = State->new(
-      api_version=>1,
-      master_dsn=>$ENV{POSTGRES_APP_URL},
-      replica_dsns=>[$ENV{POSTGRES_APP_URL}],
+      api_version  => 1,
+      master_dsn   => $ENV{POSTGRES_APP_URL},
+      replica_dsns => [ $ENV{POSTGRES_APP_URL} ],
     );
 
     is($st->master->ping, 1, 'master ping');

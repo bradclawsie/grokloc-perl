@@ -45,7 +45,8 @@ deps:
         Sub::Identify \
         Readonly \
         Test2::Harness \
-        Test2::Suite
+        Test2::Suite \
+        UUID
 
 imports:
     find . -name \*.pm -print0 | xargs -0 {{perlimports}}
