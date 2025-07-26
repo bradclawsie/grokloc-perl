@@ -29,12 +29,13 @@ deps:
         Crypt::Argon2 \
         Crypt::JWT \
         Data::UUID \
-        DBI \
         DBD::Pg \
         English \
         indirect \
         List::AllUtils \
         multidimensional \
+        Mojolicious \
+        Mojo::Pg \
         Net::IP \
         Object::Pad \
         Params::Util \

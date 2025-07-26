@@ -2,7 +2,7 @@ package main;
 use v5.40;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
-use Test2::Tools::Exception qw( dies lives );
+use Test2::Tools::Exception qw( lives );
 use strictures 2;
 use lib '../lib';
 use GrokLOC::App::State;
@@ -14,54 +14,15 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-    my $dsn = 'postgres://user:pass@host:5432/db';
-    my ($username, $password, $hostname, $port, $database_name) =
-      State::dsn_parts($dsn);
-    is($username,      'user');
-    is($password,      'pass');
-    is($hostname,      'host');
-    is($port,          5432);
-    is($database_name, 'db');
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    State::dsn_parts('mysql://user:pass@host:5432/db');
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    State::dsn_parts('://user:pass@host:5432/db');
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    State::dsn_parts('postgres://user:pass@host/db');
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    State::dsn_parts('postgres://user:pass@host:5432/');
-  },
-) or note($EVAL_ERROR);
-
-die '$POSTGRES_APP_URL not set' unless $ENV{POSTGRES_APP_URL};
-
-ok(
-  lives {
     my $st = State->new(
       api_version  => 1,
       master_dsn   => $ENV{POSTGRES_APP_URL},
       replica_dsns => [ $ENV{POSTGRES_APP_URL} ],
     );
 
-    is($st->master->ping, 1, 'master ping');
+    is($st->master->db->ping, 1, 'master ping');
     for my $replica (@{$st->replicas}) {
-      is($replica->ping, 1, 'replica ping');
+      is($replica->db->ping, 1, 'replica ping');
     }
   },
 ) or note($EVAL_ERROR);
