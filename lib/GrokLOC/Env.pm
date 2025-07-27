@@ -10,8 +10,9 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Env {
   use Carp::Assert::More qw (assert);
-  use List::AllUtils     qw( any );
   use Readonly           ();
+  use feature 'keyword_any';
+  no warnings 'experimental::keyword_any';
 
   Readonly::Scalar our $NONE  => -1;
   Readonly::Scalar our $UNIT  => 0;

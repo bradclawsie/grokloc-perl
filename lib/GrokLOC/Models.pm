@@ -10,8 +10,9 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Role {
   use Carp::Assert::More qw( assert );
-  use List::AllUtils     qw( any );
   use Readonly           ();
+  use feature 'keyword_any';
+  no warnings 'experimental::keyword_any';
 
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;

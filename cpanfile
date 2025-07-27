@@ -8,7 +8,6 @@ requires 'Crypt::Argon2';
 requires 'Crypt::JWT';
 requires 'English';
 requires 'indirect';
-requires 'List::AllUtils';
 requires 'multidimensional';
 requires 'Mojolicious';
 requires 'Mojo::Pg';
