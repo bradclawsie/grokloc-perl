@@ -4,7 +4,6 @@ use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( lives );
 use strictures 2;
-use lib '../lib';
 use GrokLOC::App::State;
 
 # ABSTRACT: test App::State

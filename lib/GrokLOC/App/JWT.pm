@@ -15,7 +15,6 @@ class JWT {
   use Crypt::JWT qw( decode_jwt encode_jwt );
   use Net::IP    qw( ip_is_ipv4 ip_is_ipv6 );
   use Readonly   ();
-  use lib '../../../lib';
   use GrokLOC::Models;
 
   Readonly::Scalar our $TOKEN_TYPE => 'Bearer';

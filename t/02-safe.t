@@ -5,7 +5,6 @@ use English                 qw(-no_match_vars);
 use Test2::V0               qw( dies done_testing note ok );
 use Test2::Tools::Exception qw( lives );
 use strictures 2;
-use lib '../lib';
 use GrokLOC::Safe;
 
 # ABSTRACT: test Safe

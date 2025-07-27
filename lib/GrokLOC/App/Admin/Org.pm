@@ -10,7 +10,6 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Org {
   use Carp::Assert::More qw( assert_isa );
-  use lib '../../../../lib';
   use GrokLOC::Models;
   use GrokLOC::Safe;
 

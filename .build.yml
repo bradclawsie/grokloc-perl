@@ -1,0 +1,41 @@
+image: archlinux
+
+environment:
+  PGHOST: localhost
+  PGDATABASE: app
+  PGUSERNAME: grokloc
+  PGPASSWORD: grokloc
+  POSTGRES_APP_URL: postgres://grokloc:grokloc@localhost:5432/app
+  DATABASE_URL: postgres://grokloc_root:grokloc@localhost:5432/app
+  REPOSITORY_BASE: /tmp
+  BIN_PATHS: ~/cpan/bin:~/grokloc-perl/local/bin:/usr/bin/vendor_perl
+
+tasks:
+  - update-pacman: |
+      sudo pacman -Sy
+  - bootstrap:
+      # need just to run justfiles in subsequent steps
+      sudo pacman --noconfirm -S fish just
+  - os-pkgs: |
+      pushd grokloc-perl
+      just os-pkgs
+  - grokloc-db: |
+      git clone https://git.sr.ht/~grokloc/grokloc-db
+      pushd grokloc-db
+      sudo just initdb
+      sudo systemctl start postgresql.service && sleep 3
+      just create-users create-databases alter-grants apply-schema
+      popd
+  - deps: |
+      pushd grokloc-perl
+      just carton
+      just deps
+  - check: |
+      pushd grokloc-perl
+      just check
+  - critic: |
+      pushd grokloc-perl
+      just critic
+  - test: |
+      pushd grokloc-perl
+      just test
