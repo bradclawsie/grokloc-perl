@@ -1,5 +1,5 @@
 package main;
-use v5.40;
+use v5.42;
 use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( dies done_testing note ok );

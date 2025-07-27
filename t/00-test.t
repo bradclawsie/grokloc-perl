@@ -1,5 +1,5 @@
 package main;
-use v5.40;
+use v5.42;
 use Test2::V0 qw( done_testing is isnt );
 use strictures 2;
 

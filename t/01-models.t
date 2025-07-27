@@ -1,5 +1,5 @@
 package main;
-use v5.40;
+use v5.42;
 use Cpanel::JSON::XS        ();
 use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);

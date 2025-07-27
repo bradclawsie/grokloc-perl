@@ -1,5 +1,5 @@
 package GrokLOC::Models;
-use v5.40;
+use v5.42;
 use strictures 2;
 use Object::Pad;
 
@@ -34,7 +34,8 @@ class Role {
 
 class Status {
   use Carp::Assert::More qw( assert );
-  use List::AllUtils     qw( any );
+  use feature 'keyword_any';
+  no warnings 'experimental::keyword_any';
 
   Readonly::Scalar our $NONE        => 0;
   Readonly::Scalar our $UNCONFIRMED => 1;

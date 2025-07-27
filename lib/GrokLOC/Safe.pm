@@ -1,5 +1,5 @@
 package GrokLOC::Safe;
-use v5.40;
+use v5.42;
 use strictures 2;
 use Object::Pad;
 

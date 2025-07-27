@@ -1,5 +1,5 @@
 package main;
-use v5.40;
+use v5.42;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( lives );
