@@ -19,9 +19,7 @@ class Role {
   Readonly::Scalar our $ADMIN  => 2;
   Readonly::Scalar our $TEST   => 3;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
@@ -42,9 +40,7 @@ class Status {
   Readonly::Scalar our $ACTIVE      => 2;
   Readonly::Scalar our $INACTIVE    => 3;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
@@ -60,14 +56,12 @@ class Meta {
     qw( assert assert_isa assert_nonnegative assert_numeric );
   use Crypt::Misc qw( is_v4uuid random_v4uuid );
 
-  #<<V
-  field $ctime :param :reader;
-  field $mtime :param :reader;
-  field $role :param :reader;
-  field $schema_version :param :reader;
-  field $signature :param :reader;
-  field $status :param :reader;
-  #>>V
+  field $ctime :param : reader;
+  field $mtime :param : reader;
+  field $role :param : reader;
+  field $schema_version :param : reader;
+  field $signature :param : reader;
+  field $status :param : reader;
 
   ADJUST {
     my $now = time;
@@ -102,9 +96,7 @@ class ID {
   use Carp::Assert::More qw( assert );
   use Crypt::Misc        qw( is_v4uuid random_v4uuid );
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   sub rand ($self) {
     return $self->new(value => random_v4uuid());

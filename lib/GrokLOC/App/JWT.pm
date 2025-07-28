@@ -19,13 +19,11 @@ class JWT {
 
   Readonly::Scalar our $TOKEN_TYPE => 'Bearer';
 
-  #<<V
-  field $exp :param :reader;
-  field $nbf :param :reader;
-  field $iss :param :reader;
-  field $sub :param :reader;
-  field $cip :param :reader;
-  #>>V
+  field $exp :param : reader;
+  field $nbf :param : reader;
+  field $iss :param : reader;
+  field $sub :param : reader;
+  field $cip :param : reader;
 
   ADJUST {
     my $now = time;

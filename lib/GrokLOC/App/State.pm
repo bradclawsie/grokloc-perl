@@ -13,12 +13,12 @@ class State {
     qw (assert_arrayref_nonempty assert_nonnegative_integer);
   use Mojo::Pg;
 
-  #<<V
-  field $api_version :param :reader;
-  field $master_dsn :param ;
-  field $master :reader ;
-  field $replica_dsns :param ;
-  field $replicas :reader ;
+  field $api_version :param : reader;
+  field $master_dsn :param;
+  field $master :reader;
+  field $replica_dsns :param;
+  field $replicas :reader;
+
   # field $valkey_conn_dsn :param :reader;
   # field $signing_key :param :reader;
   # field $repository_base :param :reader;
@@ -26,7 +26,6 @@ class State {
   # field $default_role :param :reader;
   # field $root_org :param :reader;
   # field $root_user :param :reader;
-  #>>V
 
   # `new` should be wrapped in `try/catch`.
   ADJUST {

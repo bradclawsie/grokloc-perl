@@ -13,12 +13,10 @@ class Org {
   use GrokLOC::Models;
   use GrokLOC::Safe;
 
-  #<<V
-  field $id :param :reader;
-  field $meta :param :reader;
-  field $name :param :reader;
-  field $owner :param :reader;
-  #>>V
+  field $id :param : reader;
+  field $meta :param : reader;
+  field $name :param : reader;
+  field $owner :param : reader;
 
   ADJUST {
     assert_isa($id,    'ID',      'id is not type ID');

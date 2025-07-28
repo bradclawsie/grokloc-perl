@@ -15,9 +15,7 @@ class IV {
 
   Readonly::Scalar our $LEN => 16;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert_like($value, qr/^[\da-f]{$LEN}$/x, 'not iv');
@@ -36,9 +34,7 @@ class Key {
 
   Readonly::Scalar our $LEN => 32;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert_like($value, qr/^[\da-f]{$LEN}$/x, 'not key');
@@ -83,9 +79,7 @@ class Password {
 
   Readonly::Scalar our $SALT_LEN => 16;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert_like($value, qr/\$argon2/x, 'password not argon2')
@@ -120,10 +114,8 @@ class VersionKey {
   );
   use Crypt::Misc qw( is_v4uuid random_v4uuid );
 
-  #<<V
-  field $key_map :param ;
-  field $current :param ;
-  #>>V
+  field $key_map :param;
+  field $current :param;
 
   ADJUST {
     assert_hashref($key_map, 'key_map not hashref');

@@ -15,9 +15,7 @@ class VarChar {
 
   Readonly::Scalar our $STR_MAX => 8192;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   sub varchar ($s) {
     return false unless (defined $s);

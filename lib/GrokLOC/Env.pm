@@ -20,9 +20,7 @@ class Env {
   Readonly::Scalar our $STAGE => 2;
   Readonly::Scalar our $PROD  => 3;
 
-  #<<V
-  field $value :param :reader;
-  #>>V
+  field $value :param : reader;
 
   ADJUST {
     assert(any { $_ == $value } ($UNIT, $DEV, $STAGE, $PROD), 'value');
