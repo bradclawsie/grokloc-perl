@@ -25,6 +25,10 @@ class Role {
     assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
   }
 
+  sub default ($self) {
+    return $self->new(value => $NORMAL);
+  }
+
   method TO_JSON {
     return $value;
   }
@@ -46,6 +50,10 @@ class Status {
     assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
   }
 
+  sub default ($self) {
+    return $self->new(value => $UNCONFIRMED);
+  }
+
   method TO_JSON {
     return $value;
   }
@@ -54,7 +62,7 @@ class Status {
 class Meta {
   use Carp::Assert::More
     qw( assert assert_isa assert_nonnegative assert_numeric );
-  use Crypt::Misc qw( is_v4uuid random_v4uuid );
+  use UUID qw( is_null parse uuid4 );
 
   field $ctime :param : reader;
   field $mtime :param : reader;
@@ -76,7 +84,8 @@ class Meta {
     assert_isa($role, 'Role', 'role is not type Role');
     assert_numeric($schema_version, 'schema_version');
     assert_nonnegative($schema_version, 'schema_version');
-    assert(is_v4uuid($signature), 'signature not uuidv4');
+    my $bin = 0;
+    assert(parse($signature, $bin) == 0, 'signature not uuidv4');
     assert_isa($status, 'Status', 'status not type Status');
   }
 
@@ -94,16 +103,22 @@ class Meta {
 
 class ID {
   use Carp::Assert::More qw( assert );
-  use Crypt::Misc        qw( is_v4uuid random_v4uuid );
+  use Readonly           ();
+  use UUID               qw( is_null parse uuid4 );
+
+  # This will fail is_v4uuid.
+  Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
 
   field $value :param : reader;
 
   sub rand ($self) {
-    return $self->new(value => random_v4uuid());
+    return $self->new(value => uuid4);
   }
 
   ADJUST {
-    assert(is_v4uuid($value), 'value not uuidv4');
+    my $bin = 0;
+    assert(parse($value, $bin) == 0, 'value not uuidv4');
+    assert(!is_null($bin),           'value is nil uuidv4');
   }
 
   method TO_JSON {

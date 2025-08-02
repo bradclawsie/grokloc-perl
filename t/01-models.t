@@ -45,6 +45,8 @@ ok($role isa Role);
 my $json = Cpanel::JSON::XS->new->convert_blessed([true]);
 is($Role::NORMAL, $json->encode($role));
 
+is($Role::NORMAL, Role->default()->value);
+
 ok(
   lives {
     Status->new(value => $Status::UNCONFIRMED);
@@ -75,6 +77,8 @@ ok(
 
 ok($status isa Status);
 is($Status::ACTIVE, $json->encode($status));
+
+is($Status::UNCONFIRMED, Status->default()->value);
 
 ok(
   lives {
@@ -230,6 +234,12 @@ ok(
 ok(
   dies {
     ID->new(value => undef);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    ID->new(value => $ID::NIL);
   },
 ) or note($EVAL_ERROR);
 
