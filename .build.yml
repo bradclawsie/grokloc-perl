@@ -20,7 +20,7 @@ tasks:
       pushd grokloc-perl
       just os-pkgs
   - grokloc-db: |
-      git clone https://git.sr.ht/~grokloc/grokloc-db
+      git clone https://git.sr.ht/~bradclawsie/grokloc-db
       pushd grokloc-db
       sudo just initdb
       sudo systemctl start postgresql.service && sleep 3
