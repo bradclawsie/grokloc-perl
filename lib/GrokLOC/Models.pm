@@ -126,14 +126,18 @@ class ID {
 
   field $value :param : reader;
 
-  sub rand ($self) {
-    return $self->new(value => uuid4);
-  }
-
   ADJUST {
     my $bin = 0;
-    assert(parse($value, $bin) == 0 && version($bin) == 4, 'value not uuidv4');
-    assert(!is_null($bin), 'value is nil uuidv4');
+    assert(parse($value, $bin) == 0 && (version($bin) == 4 || is_null($bin)),
+      'value not uuidv4');
+  }
+
+  sub default ($self) {
+    return $self->new(value => $NIL);
+  }
+
+  sub rand ($self) {
+    return $self->new(value => uuid4);
   }
 
   method TO_JSON {

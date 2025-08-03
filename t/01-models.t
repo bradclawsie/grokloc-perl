@@ -244,6 +244,8 @@ is(is_null($bin),         1, 'nil id is not NULL uuid');
 unparse($bin, $str);
 is($str, $ID::NIL, 'nil id does not round trip');
 
+is(ID->default->value, $ID::NIL, 'ID default');
+
 ok(
   lives {
     ID->rand();
@@ -257,8 +259,9 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+# nil ID is allowed
 ok(
-  dies {
+  lives {
     ID->new(value => $ID::NIL);
   },
 ) or note($EVAL_ERROR);
