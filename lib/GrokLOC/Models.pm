@@ -62,7 +62,7 @@ class Status {
 class Meta {
   use Carp::Assert::More
     qw( assert assert_isa assert_nonnegative assert_numeric );
-  use UUID qw( is_null parse uuid4 version );
+  use UUID qw( clear is_null parse unparse uuid4 version );
 
   field $ctime :param : reader;
   field $mtime :param : reader;
@@ -85,9 +85,24 @@ class Meta {
     assert_numeric($schema_version, 'schema_version');
     assert_nonnegative($schema_version, 'schema_version');
     my $bin = 0;
-    assert(parse($signature, $bin) == 0 && version($bin) == 4,
+    assert(parse($signature, $bin) == 0
+        && (version($bin) == 4 || is_null($bin)),
       'signature not uuidv4');
     assert_isa($status, 'Status', 'status not type Status');
+  }
+
+  sub default ($self) {
+    my ($bin, $str);
+    clear($bin);    # null uuid
+    unparse($bin, $str);
+    return $self->new(
+      ctime          => 0,
+      mtime          => 0,
+      role           => Role->default,
+      schema_version => 0,
+      signature      => $str,
+      status         => Status->default,
+    );
   }
 
   method TO_JSON {
@@ -105,7 +120,7 @@ class Meta {
 class ID {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
-  use UUID               qw( is_null parse uuid4 version );
+  use UUID               qw( clear is_null parse unparse uuid4 version );
 
   Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
 

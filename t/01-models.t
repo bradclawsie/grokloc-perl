@@ -4,7 +4,7 @@ use Cpanel::JSON::XS        ();
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
-use UUID                    qw( is_null parse unparse uuid4 );
+use UUID                    qw( clear is_null parse unparse uuid4 );
 use strictures 2;
 use GrokLOC::Models;
 
@@ -12,6 +12,8 @@ use GrokLOC::Models;
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
+
+is(Role->default->value, $Role::NORMAL, 'default role');
 
 ok(
   lives {
@@ -47,6 +49,8 @@ is($Role::NORMAL, $json->encode($role));
 
 is($Role::NORMAL, Role->default()->value);
 
+is(Status->default->value, $Status::UNCONFIRMED, 'status default');
+
 ok(
   lives {
     Status->new(value => $Status::UNCONFIRMED);
@@ -79,6 +83,17 @@ ok($status isa Status);
 is($Status::ACTIVE, $json->encode($status));
 
 is($Status::UNCONFIRMED, Status->default()->value);
+
+my $meta = Meta->default;
+is($meta->ctime,          0, 'meta ctime');
+is($meta->mtime,          0, 'meta mtime');
+is($meta->role->value,    Role->default->value);
+is($meta->schema_version, 0, 'meta schema_version');
+my ($bin, $str);
+clear($bin);    # null uuid
+unparse($bin, $str);
+is($meta->signature,     $str,                   'meta signature');
+is($meta->status->value, Status->default->value, 'meta status');
 
 ok(
   lives {
@@ -224,10 +239,8 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
-my $bin;
 is(parse($ID::NIL, $bin), 0, 'nil id is not uuid');
 is(is_null($bin),         1, 'nil id is not NULL uuid');
-my $str;
 unparse($bin, $str);
 is($str, $ID::NIL, 'nil id does not round trip');
 
