@@ -1,9 +1,9 @@
 package main;
 use v5.42;
-use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
+use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::App::JWT;
 use GrokLOC::Models;
@@ -114,7 +114,7 @@ ok(
       cip => '127.0.0.1'
     );
 
-    my $signing_key = random_v4uuid;
+    my $signing_key = uuid4;
     my $encoded     = $token->encode($signing_key);
     is($token, JWT->decode($encoded, $signing_key));
   },
@@ -132,16 +132,16 @@ ok(
       cip => '127.0.0.1'
     );
 
-    my $signing_key = random_v4uuid;
+    my $signing_key = uuid4;
     my $encoded     = $token->encode($signing_key);
-    JWT->decode($encoded, random_v4uuid);
+    JWT->decode($encoded, uuid4);
   },
 ) or note($EVAL_ERROR);
 
 ok(
   # decode bad input
   dies {
-    JWT->decode('', random_v4uuid);
+    JWT->decode('', uuid4);
   },
 ) or note($EVAL_ERROR);
 
@@ -157,7 +157,7 @@ ok(
       cip => '127.0.0.1'
     );
 
-    my $signing_key = random_v4uuid;
+    my $signing_key = uuid4;
     my $header      = $token->to_header($signing_key);
     is($token, JWT->from_header($header, $signing_key));
   },
@@ -166,7 +166,7 @@ ok(
 ok(
   # decode bad input
   dies {
-    JWT->from_header('', random_v4uuid);
+    JWT->from_header('', uuid4);
   },
 ) or note($EVAL_ERROR);
 

@@ -1,9 +1,9 @@
 package main;
 use v5.42;
-use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
+use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::Crypt;
 
@@ -93,8 +93,8 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
-my $current = random_v4uuid;
-my %key_map = ($current => $key, random_v4uuid() => Key->rand());
+my $current = uuid4;
+my %key_map = ($current => $key, uuid4() => Key->rand());
 
 ok(
   dies {
@@ -112,7 +112,7 @@ ok(
 
 ok(
   dies {
-    $version_key->get(random_v4uuid());
+    $version_key->get(uuid4());
   },
 ) or note($EVAL_ERROR);
 

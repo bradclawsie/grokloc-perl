@@ -1,9 +1,9 @@
 package main;
 use v5.42;
-use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( dies done_testing note ok );
 use Test2::Tools::Exception qw( lives );
+use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::Safe;
 
@@ -15,7 +15,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 ok(
   lives {
     VarChar->rand();
-    VarChar->new(value => random_v4uuid);
+    VarChar->new(value => uuid4);
     VarChar->new(value => '.' x $VarChar::STR_MAX);
   },
 ) or note($EVAL_ERROR);

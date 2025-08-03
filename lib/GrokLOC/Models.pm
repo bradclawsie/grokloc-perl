@@ -62,7 +62,7 @@ class Status {
 class Meta {
   use Carp::Assert::More
     qw( assert assert_isa assert_nonnegative assert_numeric );
-  use UUID qw( is_null parse uuid4 );
+  use UUID qw( is_null parse uuid4 version );
 
   field $ctime :param : reader;
   field $mtime :param : reader;
@@ -85,7 +85,8 @@ class Meta {
     assert_numeric($schema_version, 'schema_version');
     assert_nonnegative($schema_version, 'schema_version');
     my $bin = 0;
-    assert(parse($signature, $bin) == 0, 'signature not uuidv4');
+    assert(parse($signature, $bin) == 0 && version($bin) == 4,
+      'signature not uuidv4');
     assert_isa($status, 'Status', 'status not type Status');
   }
 
@@ -104,9 +105,8 @@ class Meta {
 class ID {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
-  use UUID               qw( is_null parse uuid4 );
+  use UUID               qw( is_null parse uuid4 version );
 
-  # This will fail is_v4uuid.
   Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
 
   field $value :param : reader;
@@ -117,8 +117,8 @@ class ID {
 
   ADJUST {
     my $bin = 0;
-    assert(parse($value, $bin) == 0, 'value not uuidv4');
-    assert(!is_null($bin),           'value is nil uuidv4');
+    assert(parse($value, $bin) == 0 && version($bin) == 4, 'value not uuidv4');
+    assert(!is_null($bin), 'value is nil uuidv4');
   }
 
   method TO_JSON {

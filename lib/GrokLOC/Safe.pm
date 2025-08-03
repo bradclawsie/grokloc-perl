@@ -10,8 +10,8 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class VarChar {
   use Carp::Assert::More qw( assert );
-  use Crypt::Misc        qw( random_v4uuid );
   use Readonly           ();
+  use UUID               qw( uuid4 );
 
   Readonly::Scalar our $STR_MAX => 8192;
 
@@ -33,7 +33,7 @@ class VarChar {
   }
 
   sub rand ($self) {
-    return $self->new(value => random_v4uuid());
+    return $self->new(value => uuid4());
   }
 
   ADJUST {

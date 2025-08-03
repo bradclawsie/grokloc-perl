@@ -1,10 +1,10 @@
 package main;
 use v5.42;
 use Cpanel::JSON::XS        ();
-use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Exception qw( dies lives );
+use UUID                    qw( is_null parse unparse uuid4 );
 use strictures 2;
 use GrokLOC::Models;
 
@@ -88,7 +88,7 @@ ok(
       mtime          => $now,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -102,7 +102,7 @@ ok(
       mtime          => $now,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -116,7 +116,7 @@ ok(
       mtime          => $now,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -130,7 +130,7 @@ ok(
       mtime          => -1,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -144,7 +144,7 @@ ok(
       mtime          => $now - 100,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -158,7 +158,7 @@ ok(
       mtime          => $now,
       role           => undef,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -172,7 +172,7 @@ ok(
       mtime          => $now,
       role           => $role,
       schema_version => -1,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => $status
     );
   },
@@ -200,7 +200,7 @@ ok(
       mtime          => $now,
       role           => $role,
       schema_version => 0,
-      signature      => random_v4uuid,
+      signature      => uuid4,
       status         => undef
     );
   },
@@ -216,7 +216,7 @@ ok(
           mtime          => $now,
           role           => $role,
           schema_version => 0,
-          signature      => random_v4uuid,
+          signature      => uuid4,
           status         => $status
         )
       )
@@ -224,10 +224,17 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+my $bin;
+is(parse($ID::NIL, $bin), 0, 'nil id is not uuid');
+is(is_null($bin),         1, 'nil id is not NULL uuid');
+my $str;
+unparse($bin, $str);
+is($str, $ID::NIL, 'nil id does not round trip');
+
 ok(
   lives {
     ID->rand();
-    ID->new(value => random_v4uuid());
+    ID->new(value => uuid4());
   },
 ) or note($EVAL_ERROR);
 
@@ -253,8 +260,7 @@ ok(
   lives {
     my $json =
       Cpanel::JSON::XS->new->convert_blessed([true])->allow_nonref([true]);
-    ID->new(
-      value => $json->decode($json->encode(ID->new(value => random_v4uuid()))));
+    ID->new(value => $json->decode($json->encode(ID->new(value => uuid4()))));
   },
 ) or note($EVAL_ERROR);
 

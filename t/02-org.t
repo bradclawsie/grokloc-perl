@@ -1,9 +1,9 @@
 package main;
 use v5.42;
-use Crypt::Misc             qw( random_v4uuid );
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing note ok );
 use Test2::Tools::Exception qw( lives );
+use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::Models;
 use GrokLOC::Safe;
@@ -20,7 +20,7 @@ my $meta = Meta->new(
   mtime          => $now,
   role           => Role->new(value => $Role::TEST),
   schema_version => 0,
-  signature      => random_v4uuid,
+  signature      => uuid4,
   status         => Status->new(value => $Status::ACTIVE),
 );
 

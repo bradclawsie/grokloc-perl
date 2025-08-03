@@ -913,19 +913,6 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
-  List-AllUtils-0.19
-    pathname: D/DR/DROLSKY/List-AllUtils-0.19.tar.gz
-    provides:
-      List::AllUtils 0.19
-    requirements:
-      Exporter 0
-      ExtUtils::MakeMaker 0
-      List::SomeUtils 0.58
-      List::Util 1.56
-      List::UtilsBy 0.11
-      base 0
-      strict 0
-      warnings 0
   List-MoreUtils-0.430
     pathname: R/RE/REHSACK/List-MoreUtils-0.430.tar.gz
     provides:
@@ -975,13 +962,6 @@ DISTRIBUTIONS
       XSLoader 0
       strict 0
       warnings 0
-  List-UtilsBy-0.12
-    pathname: P/PE/PEVANS/List-UtilsBy-0.12.tar.gz
-    provides:
-      List::UtilsBy 0.12
-    requirements:
-      Exporter 5.57
-      Module::Build 0.4004
   Log-Dispatch-2.71
     pathname: D/DR/DROLSKY/Log-Dispatch-2.71.tar.gz
     provides:
