@@ -2535,6 +2535,16 @@ DISTRIBUTIONS
       Scalar::Util 1.14
       perl 5.006
       strict 0
+  Term-ReadLine-Gnu-1.47
+    pathname: H/HA/HAYASHI/Term-ReadLine-Gnu-1.47.tar.gz
+    provides:
+      Term::ReadLine::Gnu 1.47
+      Term::ReadLine::Gnu::AU 1.47
+      Term::ReadLine::Gnu::Var 1.47
+      Term::ReadLine::Gnu::XS 1.47
+    requirements:
+      ExtUtils::MakeMaker 0
+      perl 5.008001
   Test-Deep-1.205
     pathname: R/RJ/RJBS/Test-Deep-1.205.tar.gz
     provides:

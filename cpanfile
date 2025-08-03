@@ -22,6 +22,7 @@ requires 'Perl::Tidy';
 requires 'Perl::Tidy::Sweetened';
 requires 'strictures';
 requires 'Readonly';
+requires 'Term::ReadLine::Gnu';
 requires 'Test2::Harness';
 requires 'Test2::Suite';
 requires 'UUID';

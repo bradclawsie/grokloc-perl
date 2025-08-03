@@ -45,6 +45,9 @@ os-pkgs:
             postgresql \
             postgresql-libs
 
+repl:
+    {{env}}; perl -de 0
+
 test:
     {{env}}; find t -name \*.t -print0 | xargs -0 {{yath}}
 
