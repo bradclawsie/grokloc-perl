@@ -8,7 +8,6 @@ environment:
   POSTGRES_APP_URL: postgres://grokloc:grokloc@localhost:5432/app
   DATABASE_URL: postgres://grokloc_root:grokloc@localhost:5432/app
   REPOSITORY_BASE: /tmp
-  BIN_PATHS: ~/cpan/bin:~/grokloc-perl/local/bin:/usr/bin/vendor_perl
 
 tasks:
   - update-pacman: |
@@ -18,7 +17,7 @@ tasks:
       sudo pacman --noconfirm -S fish just
   - os-pkgs: |
       pushd grokloc-perl
-      just os-pkgs
+      just os-pkgs-arch
   - grokloc-db: |
       git clone https://git.sr.ht/~bradclawsie/grokloc-db
       pushd grokloc-db
@@ -27,6 +26,7 @@ tasks:
       just create-users create-databases alter-grants apply-schema
       popd
   - deps: |
+      export PATH="/usr/bin/vendor_perl:$PATH"
       pushd grokloc-perl
       just carton
       just deps

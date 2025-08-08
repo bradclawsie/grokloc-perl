@@ -40,7 +40,7 @@ imports:
     {{env}}; find t -name \*.t -print0 | xargs -0 {{perlimports}}
 
 # just and fish need to be installed beforehand
-os-pkgs:
+os-pkgs-arch:
     sudo pacman --noconfirm -S \
             ca-certificates \
             cpanminus \
