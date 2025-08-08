@@ -4,7 +4,11 @@ set shell := ["fish", "-c"]
 set dotenv-load
 
 cpan_dir := '~/cpan'
-env := 'set -x PERL5LIB local/lib/perl5:lib; set -x PATH local/bin $PATH'
+env := '\
+set -x PERL5LIB local/lib/perl5:lib; \
+set -x PATH local/bin $PATH \
+\
+'
 perlcritic := 'perlcritic --profile .perlcritic'
 perlimports := 'perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename ./.perlimports-ignore -f '
 perltidy := 'perltidier -i=2 -pt=2 -bt=2 -pvt=2 -b -cs '
@@ -17,7 +21,8 @@ all:
     just --justfile {{justfile()}} check critic imports tidy test
 
 carton:
-    /usr/bin/vendor_perl/cpanm -l {{cpan_dir}} -n Carton
+    mkdir -p {{cpan_dir}}
+    cpanm -l {{cpan_dir}} -n Carton
 
 check:
     {{env}}; for i in $(find lib -name \*.pm); perl -c $i; end
@@ -27,7 +32,7 @@ critic:
     {{env}}; find lib -name \*.pm -print0 | xargs -0 {{perlcritic}}
     {{env}}; find t -name \*.t -print0 | xargs -0 {{perlcritic}} --theme=tests
 
-deps:
+deps: carton
     set -x PERL5LIB {{cpan_dir}}/lib/perl5; {{cpan_dir}}/bin/carton install
 
 imports:
