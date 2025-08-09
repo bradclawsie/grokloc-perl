@@ -12,12 +12,8 @@ environment:
 tasks:
   - update-pacman: |
       sudo pacman -Sy
-  - bootstrap:
-      # need just to run justfiles in subsequent steps
-      sudo pacman --noconfirm -S fish just
-  - os-pkgs: |
-      pushd grokloc-perl
-      just os-pkgs-arch
+  - setup:
+      sudo bash grokloc-perl/setup-arch.sh
   - grokloc-db: |
       git clone https://git.sr.ht/~bradclawsie/grokloc-db
       pushd grokloc-db

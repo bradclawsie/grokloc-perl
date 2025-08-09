@@ -39,17 +39,6 @@ imports:
     {{env}}; find lib -name \*.pm -print0 | xargs -0 {{perlimports}}
     {{env}}; find t -name \*.t -print0 | xargs -0 {{perlimports}}
 
-# just and fish need to be installed beforehand
-os-pkgs-arch:
-    sudo pacman --noconfirm -S \
-            ca-certificates \
-            cpanminus \
-            git \
-            openssl \
-            perl-dbd-pg \
-            postgresql \
-            postgresql-libs
-
 repl:
     {{env}}; perl -de 0
 
