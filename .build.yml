@@ -12,16 +12,7 @@ tasks:
       sudo systemctl start postgresql.service && sleep 3
       just create-users create-databases alter-grants apply-schema
       popd
-  - deps: |
+  - tests: |
       pushd grokloc-perl
-      just carton
-      just deps
-  - check: |
-      pushd grokloc-perl
-      just check
-  - critic: |
-      pushd grokloc-perl
-      just critic
-  - test: |
-      pushd grokloc-perl
-      just test
+      just deps check critic test
+
