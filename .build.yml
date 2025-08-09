@@ -1,14 +1,5 @@
 image: archlinux
 
-environment:
-  PGHOST: localhost
-  PGDATABASE: app
-  PGUSERNAME: grokloc
-  PGPASSWORD: grokloc
-  POSTGRES_APP_URL: postgres://grokloc:grokloc@localhost:5432/app
-  DATABASE_URL: postgres://grokloc_root:grokloc@localhost:5432/app
-  REPOSITORY_BASE: /tmp
-
 tasks:
   - update-pacman: |
       sudo pacman -Sy
@@ -22,7 +13,6 @@ tasks:
       just create-users create-databases alter-grants apply-schema
       popd
   - deps: |
-      export PATH="/usr/bin/vendor_perl:$PATH"
       pushd grokloc-perl
       just carton
       just deps
