@@ -61,9 +61,9 @@ tidy:
     find . -name \*.pm -print0 | xargs -0 {{perltidy}} 2>/dev/null
     @{{with_path}}; {{with_perl5lib}}; \
     find . -name \*.t -print0 | xargs -0 {{perltidy}} 2>/dev/null
-    find -name \*bak -delete
-    find -name \*tdy -delete
-    find -name \*.ERR -delete
+    @find -name \*bak -delete
+    @find -name \*tdy -delete
+    @find -name \*.ERR -delete
 
 yath TEST:
     @{{with_path}}; {{with_perl5lib}}; \
