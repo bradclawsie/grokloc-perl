@@ -19,17 +19,19 @@ all:
 
 carton:
     @{{with_path}}; {{with_perl5lib}}; \
-    mkdir -p {{cpan_dir}};
+    mkdir -p {{cpan_dir}}; \
     cpanm -l {{cpan_dir}} -n Carton
 
 check:
     @{{with_path}}; {{with_perl5lib}}; \
     for i in $(find lib -name \*.pm); perl -c $i; end
+    @{{with_path}}; {{with_perl5lib}}; \
     for i in $(find t -name \*.t); perl -c $i; end
 
 critic:
     @{{with_path}}; {{with_perl5lib}}; \
     find lib -name \*.pm -print0 | xargs -0 {{perlcritic}}
+    @{{with_path}}; {{with_perl5lib}}; \
     find t -name \*.t -print0 | xargs -0 {{perlcritic}} --theme=tests
 
 deps: carton
@@ -43,6 +45,7 @@ env:
 imports:
     @{{with_path}}; {{with_perl5lib}}; \
     find lib -name \*.pm -print0 | xargs -0 {{perlimports}}
+    @{{with_path}}; {{with_perl5lib}}; \
     find t -name \*.t -print0 | xargs -0 {{perlimports}}
 
 repl:
@@ -56,6 +59,7 @@ test:
 tidy:
     @{{with_path}}; {{with_perl5lib}}; \
     find . -name \*.pm -print0 | xargs -0 {{perltidy}} 2>/dev/null
+    @{{with_path}}; {{with_perl5lib}}; \
     find . -name \*.t -print0 | xargs -0 {{perltidy}} 2>/dev/null
     find -name \*bak -delete
     find -name \*tdy -delete
