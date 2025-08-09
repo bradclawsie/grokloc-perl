@@ -1,0 +1,9 @@
+PERL5LIB=lib:local/lib/perl5
+PGHOST=localhost
+PGDATABASE=app
+PGUSERNAME=grokloc
+PGPASSWORD=grokloc
+POSTGRES_APP_URL=postgres://grokloc:grokloc@localhost:5432/app
+DATABASE_URL=postgres://grokloc_root:grokloc@localhost:5432/app
+REPOSITORY_BASE=/tmp
+
