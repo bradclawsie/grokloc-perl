@@ -37,7 +37,7 @@ critic:
     @{{with_path}}; {{with_perl5lib}}; \
     find t -name \*.t -print0 | xargs -0 {{perlcritic}} --theme=tests
 
-deps: carton
+deps:
     @{{with_path}}; {{with_perl5lib}}; \
     carton install
 
