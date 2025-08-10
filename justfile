@@ -3,10 +3,7 @@ set dotenv-load := true
 set dotenv-filename := 'dotenv-unit'
 set dotenv-required := true
 
-export PERL_PATH := shell("dirname `which perl`")
-export CPANM_PATH := shell("dirname `which cpanm`")
-
-with_path := 'PATH=${PWD}/local/bin:${CPANM_PATH}:${PERL_PATH}:/usr/local/sbin:/usr/local/bin:/usr/bin'
+with_path := 'PATH=${PWD}/local/bin:${PATH}'
 with_perl5lib := 'PERL5LIB=${PWD}/lib:${PWD}/local/lib/perl5'
 cpan_dir := 'local'
 perlcritic := 'perlcritic --profile ${PWD}/.perlcritic'
