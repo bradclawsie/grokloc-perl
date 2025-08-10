@@ -3,7 +3,6 @@
 pacman --noconfirm -S \
   ca-certificates \
   cpanminus \
-  fish \
   git \
   just \
   openssl \

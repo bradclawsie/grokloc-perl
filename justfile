@@ -1,16 +1,16 @@
-set shell := ["fish", "-c"]
+set shell := ["bash", "-c"]
 set dotenv-load := true
 set dotenv-filename := 'dotenv-unit'
 set dotenv-required := true
 
-export PERL_PATH := shell("dirname (which perl)")
-export CPANM_PATH := shell("dirname (which cpanm)")
+export PERL_PATH := shell("dirname `which perl`")
+export CPANM_PATH := shell("dirname `which cpanm`")
 
-with_path := 'set -x PATH {$PWD}/local/bin:{$CPANM_PATH}:{$PERL_PATH}:/usr/local/sbin:/usr/local/bin:/usr/bin'
-with_perl5lib := 'set -x PERL5LIB {$PWD}/lib:{$PWD}/local/lib/perl5'
+with_path := 'PATH=${PWD}/local/bin:${CPANM_PATH}:${PERL_PATH}:/usr/local/sbin:/usr/local/bin:/usr/bin'
+with_perl5lib := 'PERL5LIB=${PWD}/lib:${PWD}/local/lib/perl5'
 cpan_dir := 'local'
-perlcritic := 'perlcritic --profile {$PWD}/.perlcritic'
-perlimports := 'perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename {$PWD}/.perlimports-ignore -f '
+perlcritic := 'perlcritic --profile ${PWD}/.perlcritic'
+perlimports := 'perlimports -i --no-preserve-unused --libs lib --ignore-modules-filename ${PWD}/.perlimports-ignore -f '
 perltidy := 'perltidier -i=2 -pt=2 -bt=2 -pvt=2 -b -cs '
 yath := 'yath --max-open-jobs=1000'
 
@@ -27,9 +27,9 @@ carton:
 
 check:
     @{{with_path}}; {{with_perl5lib}}; \
-    for i in $(find lib -name \*.pm); perl -c $i; end
+    for i in `find lib -name \*.pm`; do perl -c $i; done
     @{{with_path}}; {{with_perl5lib}}; \
-    for i in $(find t -name \*.t); perl -c $i; end
+    for i in `find t -name \*.t`; do perl -c $i; done
 
 critic:
     @{{with_path}}; {{with_perl5lib}}; \
@@ -37,7 +37,7 @@ critic:
     @{{with_path}}; {{with_perl5lib}}; \
     find t -name \*.t -print0 | xargs -0 {{perlcritic}} --theme=tests
 
-deps:
+deps: carton
     @{{with_path}}; {{with_perl5lib}}; \
     carton install
 
