@@ -3,7 +3,10 @@ set dotenv-load := true
 set dotenv-filename := 'dotenv-unit'
 set dotenv-required := true
 
-with_path := 'set -x PATH {$PWD}/local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl'
+export PERL_PATH := shell("dirname (which perl)")
+export CPANM_PATH := shell("dirname (which cpanm)")
+
+with_path := 'set -x PATH {$PWD}/local/bin:{$CPANM_PATH}:{$PERL_PATH}:/usr/local/sbin:/usr/local/bin:/usr/bin'
 with_perl5lib := 'set -x PERL5LIB {$PWD}/lib:{$PWD}/local/lib/perl5'
 cpan_dir := 'local'
 perlcritic := 'perlcritic --profile {$PWD}/.perlcritic'
@@ -39,7 +42,7 @@ deps: carton
     carton install
 
 env:
-    @{{with_path}}; {{with_perl5lib}}; \
+    {{with_path}}; {{with_perl5lib}}; \
     env
 
 imports:
