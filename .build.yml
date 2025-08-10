@@ -1,11 +1,16 @@
 image: archlinux
+packages:
+  - ca-certificates
+  - cpanminus
+  - git
+  - just
+  - openssl
+  - perl-dbd-pg
+  - postgresql
+  - postgresql-libs
 environment:
   PERL5LIB: "$HOME/grokloc-perl/lib:$HOME/grokloc-perl/local/lib/perl5"
 tasks:
-  - update-pacman: |
-      sudo pacman -Sy
-  - setup:
-      sudo bash grokloc-perl/setup-arch.sh
   - grokloc-db: |
       git clone https://git.sr.ht/~bradclawsie/grokloc-db
       pushd grokloc-db
