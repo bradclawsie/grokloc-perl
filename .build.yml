@@ -1,10 +1,7 @@
 image: archlinux
 packages:
-  - ca-certificates
   - cpanminus
-  - git
   - just
-  - openssl
   - perl-dbd-pg
   - postgresql
   - postgresql-libs
