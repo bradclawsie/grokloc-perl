@@ -1,7 +1,8 @@
 image: archlinux
 
 environment:
-  PERL5LIB:"~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
+  PERL5LIB: "~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
+
 tasks:
   - update-pacman: |
       sudo pacman -Sy
