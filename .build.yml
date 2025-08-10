@@ -13,12 +13,11 @@ tasks:
       just create-users create-databases alter-grants apply-schema
       popd
   - deps: |
-      export PATH="~/grokloc-perl/local/bin:$PATH"
-      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
       pushd grokloc-perl
       mkdir -p local
       /usr/bin/vendor_perl/cpanm -l local -n Carton
-      carton install
+      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"; \
+      env && carton install
   - tests: |
       export PATH="~/grokloc-perl/local/bin:$PATH"
       export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
