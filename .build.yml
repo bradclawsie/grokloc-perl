@@ -5,8 +5,6 @@ tasks:
       sudo pacman -Sy
   - setup:
       sudo bash grokloc-perl/setup-arch.sh
-      export PATH="~/grokloc-perl/local/bin:$PATH"
-      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
   - grokloc-db: |
       git clone https://git.sr.ht/~bradclawsie/grokloc-db
       pushd grokloc-db
@@ -15,11 +13,15 @@ tasks:
       just create-users create-databases alter-grants apply-schema
       popd
   - deps: |
+      export PATH="~/grokloc-perl/local/bin:$PATH"
+      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
       pushd grokloc-perl
       mkdir -p local
       /usr/bin/vendor_perl/cpanm -l local -n Carton
       carton install
   - tests: |
+      export PATH="~/grokloc-perl/local/bin:$PATH"
+      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
       pushd grokloc-perl
       just check critic test
 
