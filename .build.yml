@@ -14,5 +14,5 @@ tasks:
       popd
   - tests: |
       pushd grokloc-perl
-      just deps check critic test
+      fish -c "just deps check critic test"
 
