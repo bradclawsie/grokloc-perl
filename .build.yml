@@ -17,7 +17,7 @@ tasks:
       pushd grokloc-perl
       mkdir -p local
       /usr/bin/vendor_perl/cpanm -l local -n Carton
-      PERL5LIB="$HOME/grokloc-perl/local/lib/perl5"; local/bin/carton install
+      local/bin/carton install
   - tests: |
       pushd grokloc-perl
       just check critic test
