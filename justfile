@@ -19,6 +19,7 @@ all:
 
 carton:
     @{{with_path}}; {{with_perl5lib}}; \
+    echo $PATH; \
     mkdir -p {{cpan_dir}}; \
     cpanm -l {{cpan_dir}} -n Carton
 
