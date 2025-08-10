@@ -1,5 +1,7 @@
 image: archlinux
 
+environment:
+  PERL5LIB:"~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"
 tasks:
   - update-pacman: |
       sudo pacman -Sy
@@ -16,7 +18,6 @@ tasks:
       pushd grokloc-perl
       mkdir -p local
       /usr/bin/vendor_perl/cpanm -l local -n Carton
-      export PERL5LIB="~/grokloc-perl/lib:~/grokloc-perl/local/lib/perl5"; \
       env && local/bin/carton install
   - tests: |
       export PATH="~/grokloc-perl/local/bin:$PATH"
