@@ -24,6 +24,35 @@ class Org {
     assert_isa($name,  'VarChar', 'name is not type VarChar');
     assert_isa($owner, 'ID',      'owner is not type ID');
   }
+
+  sub default ($self) {
+    return $self->new(
+      id    => ID->default,
+      meta  => Meta->default,
+      name  => VarChar->default,
+      owner => ID->default
+    );
+  }
+
+  sub rand ($self) {
+    my $meta = Meta->default;
+    $meta->Role = $Role::TEST;
+    return $self->new(
+      id    => ID->rand,
+      meta  => $meta,
+      name  => VarChar->rand,
+      owner => ID->rand
+    );
+  }
+
+  method TO_JSON {
+    return {
+      id    => $id->TO_JSON,
+      meta  => $meta->TO_JSON,
+      name  => $name->TO_JSON,
+      owner => $owner->TO_JSON
+    };
+  }
 }
 
 __END__

@@ -32,6 +32,10 @@ class VarChar {
     return true;
   }
 
+  sub default ($self) {
+    return $self->new(value => qw{});
+  }
+
   sub rand ($self) {
     return $self->new(value => uuid4());
   }
