@@ -17,7 +17,8 @@ all:
 
 carton:
     mkdir -p local;
-    cpanm -l local -n Carton
+    unset PERL5LIB;
+    cpanm -l local -n -f Carton
 
 check:
     @{{with_perl5lib}}; \
