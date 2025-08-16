@@ -3460,13 +3460,6 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  local-lib-2.000029
-    pathname: H/HA/HAARG/local-lib-2.000029.tar.gz
-    provides:
-      lib::core::only undef
-      local::lib 2.000029
-    requirements:
-      perl 5.006
   multidimensional-0.014
     pathname: I/IL/ILMARI/multidimensional-0.014.tar.gz
     provides:
