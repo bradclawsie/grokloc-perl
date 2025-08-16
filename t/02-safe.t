@@ -14,9 +14,11 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-    VarChar->rand();
+    VarChar->default;
+    VarChar->rand;
     VarChar->new(value => uuid4);
     VarChar->new(value => '.' x $VarChar::STR_MAX);
+    VarChar->trusted(uuid4);
   },
 ) or note($EVAL_ERROR);
 
@@ -28,6 +30,14 @@ for my $fail ('', '.' x ($VarChar::STR_MAX + 1),
     dies {
       VarChar->new(value => $fail);
     },
+  ) or note($EVAL_ERROR);
+
+  # Let through anything if tested => true.
+  ok(
+    lives {
+      VarChar->new(value => $fail, trust => true);
+      VarChar->trusted($fail);
+    }
   ) or note($EVAL_ERROR);
 }
 

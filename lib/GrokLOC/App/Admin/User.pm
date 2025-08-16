@@ -9,10 +9,13 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class User {
-  use Carp::Assert::More qw( assert_isa );
+  use Carp::Assert::More    qw( assert assert_isa );
+  use Crypt::Digest::SHA256 qw( sha256_hex );
+  use Crypt::PK::Ed25519    ();
+  use GrokLOC::Crypt;
   use GrokLOC::Models;
   use GrokLOC::Safe;
-  use UUID qw( clear is_null parse unparse version );
+  use UUID qw( clear is_null parse unparse uuid4 version );
 
   field $id :param : reader;
   field $meta :param : reader;
@@ -40,22 +43,58 @@ class User {
   }
 
   sub default ($self) {
-    my ($bin, $str) = (0, qw{});
+    my ($bin, $str) = (0, q{});
     clear($bin);
     unparse($bin, $str);
     return $self->new(
       id                  => ID->default,
       meta                => Meta->default,
       api_key             => VarChar->default,
-      api_key_digest      => qw{},
+      api_key_digest      => q{},
       display_name        => VarChar->default,
-      display_name_digest => qw{},
+      display_name_digest => q{},
       email               => VarChar->default,
-      email_digest        => qw{},
+      email_digest        => q{},
       org                 => ID->default,
-      password            => qw{},
+      password            => q{},
       key_version         => $str
     );
+  }
+
+  # Return a random User as if it was read from the
+  # database (decrypted). Also provide seed plaintext
+  # password and api private key.
+  sub rand ($self) {
+    my $pt       = uuid4;                 # Plaintext password.
+    my $password = Password->from($pt);
+
+    my ($display_name, $email) = (uuid4, uuid4);
+    my $display_name_digest = sha256_hex($display_name);
+    my $email_digest        = sha256_hex($email);
+
+    my $pk                = Crypt::PK::Ed25519->new->generate_key;
+    my $private_key       = $pk->export_key_jwk('private');
+    my $public_key        = $pk->export_key_jwk('public');
+    my $public_key_digest = sha256_hex($public_key);
+
+    my $meta = Meta->default;
+    $meta->Role = $Role::TEST;
+
+    my $user = $self->new(
+      id                  => ID->rand(),
+      meta                => $meta,
+      api_key             => VarChar->trusted($public_key),
+      api_key_digest      => $public_key_digest,
+      display_name        => VarChar->default(),
+      display_name_digest => $display_name_digest,
+      email               => VarChar->default(),
+      email_digest        => $email_digest,
+      org                 => ID->default(),
+      password            => $password,
+      key_version         => uuid4()
+    );
+
+    return ($user, $private_key, $pt);
   }
 
   # Omitted fields not intended for distribution.

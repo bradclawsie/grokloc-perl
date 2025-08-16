@@ -15,6 +15,7 @@ class VarChar {
 
   Readonly::Scalar our $STR_MAX => 8192;
 
+  field $trust :param : reader = false;    # Skip check if true.
   field $value :param : reader;
 
   sub varchar ($s) {
@@ -33,15 +34,21 @@ class VarChar {
   }
 
   sub default ($self) {
-    return $self->new(value => qw{});
+    return $self->new(value => q{}, trust => true);
   }
 
   sub rand ($self) {
-    return $self->new(value => uuid4());
+    return $self->new(value => uuid4, trust => true);
+  }
+
+  sub trusted ($self, $value) {
+    return $self->new(value => $value, trust => true);
   }
 
   ADJUST {
-    assert(varchar($value), 'value not varchar');
+    unless ($trust) {
+      assert(varchar($value), 'value not varchar');
+    }
   }
 
   method TO_JSON {
