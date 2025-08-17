@@ -68,10 +68,6 @@ class State {
       'version_key is not type VersionKey');
   }
 
-  method random_replica {
-    return $replicas->[ int rand @{$replicas} ];
-  }
-
   sub unit ($self) {
     return $self->new(
       api_version     => 1,
@@ -84,6 +80,11 @@ class State {
       version_key     => VersionKey->unit,
     );
   }
+
+  method random_replica {
+    return $replicas->[ int rand @{$replicas} ];
+  }
+
 }
 
 __END__

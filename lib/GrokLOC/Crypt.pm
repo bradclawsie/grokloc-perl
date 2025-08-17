@@ -132,6 +132,15 @@ class VersionKey {
     assert($found_current, 'current key not in key_map');
   }
 
+  sub unit ($self) {
+    my $key     = Key->rand;
+    my $current = uuid4;
+    return $self->new(
+      current => $current,
+      key_map => {$current => $key}
+    );
+  }
+
   method get ($key) {
     my $value = $key_map->{$key};
     assert_defined($value, 'no value for key in key_map');
@@ -140,15 +149,6 @@ class VersionKey {
 
   method get_current {
     return get($current);
-  }
-
-  sub unit ($self) {
-    my $key     = Key->rand;
-    my $current = uuid4;
-    return $self->new(
-      current => $current,
-      key_map => {$current => $key}
-    );
   }
 }
 
