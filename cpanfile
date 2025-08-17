@@ -11,6 +11,7 @@ requires 'indirect';
 requires 'multidimensional';
 requires 'Mojolicious';
 requires 'Mojo::Pg';
+requires 'Mojo::Redis';
 requires 'Net::IP';
 requires 'Object::Pad';
 requires 'Perl::Critic';

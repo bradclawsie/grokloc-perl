@@ -10,16 +10,18 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class State {
   use Carp::Assert::More
-    qw (assert_arrayref_nonempty assert_nonnegative_integer);
+    qw (assert_arrayref_nonempty assert_nonblank assert_nonnegative_integer);
   use Mojo::Pg;
+  use Mojo::Redis;
 
   field $api_version :param : reader;
   field $master_dsn :param;
   field $master :reader;
   field $replica_dsns :param;
   field $replicas :reader;
+  field $valkey_dsn :param;
+  field $valkey :reader;
 
-  # field $valkey_conn_dsn :param :reader;
   # field $signing_key :param :reader;
   # field $repository_base :param :reader;
   # field $version_key :param :reader;
@@ -44,10 +46,23 @@ class State {
     for my $replica_dsn (@{$replica_dsns}) {
       push(@{$replicas}, Mojo::Pg->new($replica_dsn));
     }
+
+    # valkey
+    assert_nonblank($valkey_dsn, 'valkey_dsn malformed');
+    $valkey = Mojo::Redis->new($valkey_dsn);
   }
 
   method random_replica {
     return $replicas->[ int rand @{$replicas} ];
+  }
+
+  sub unit ($self) {
+    return $self->new(
+      api_version  => 1,
+      master_dsn   => $ENV{POSTGRES_APP_URL},
+      replica_dsns => [ $ENV{POSTGRES_APP_URL} ],
+      valkey_dsn   => $ENV{REDIS_SERVER},
+    );
   }
 }
 

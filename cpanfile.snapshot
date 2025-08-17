@@ -1374,6 +1374,21 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
+  Mojo-Redis-3.29
+    pathname: J/JH/JHTHORSEN/Mojo-Redis-3.29.tar.gz
+    provides:
+      Mojo::Redis 3.29
+      Mojo::Redis::Cache undef
+      Mojo::Redis::Connection undef
+      Mojo::Redis::Connection::Offline undef
+      Mojo::Redis::Cursor undef
+      Mojo::Redis::Database undef
+      Mojo::Redis::PubSub undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      Mojolicious 8.50
+      Protocol::Redis::Faster 0.002
+      perl 5.016
   Mojolicious-9.41
     pathname: S/SR/SRI/Mojolicious-9.41.tar.gz
     provides:
@@ -2421,6 +2436,26 @@ DISTRIBUTIONS
       Text::Wrap 0
       constant 0
       locale 0
+      parent 0
+      perl 5.008001
+  Protocol-Redis-1.0021
+    pathname: U/UN/UNDEF/Protocol-Redis-1.0021.tar.gz
+    provides:
+      Protocol::Redis 1.0021
+      Protocol::Redis::Test undef
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      Test::More 0.94
+      perl 5.008001
+  Protocol-Redis-Faster-0.003
+    pathname: D/DB/DBOOK/Protocol-Redis-Faster-0.003.tar.gz
+    provides:
+      Protocol::Redis::Faster 0.003
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      Protocol::Redis 1.0000
       parent 0
       perl 5.008001
   Readonly-2.05

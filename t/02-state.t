@@ -13,16 +13,14 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 ok(
   lives {
-    my $st = State->new(
-      api_version  => 1,
-      master_dsn   => $ENV{POSTGRES_APP_URL},
-      replica_dsns => [ $ENV{POSTGRES_APP_URL} ],
-    );
+    my $st = State->unit;
 
     is($st->master->db->ping, 1, 'master ping');
     for my $replica (@{$st->replicas}) {
       is($replica->db->ping, 1, 'replica ping');
     }
+
+    is($st->valkey->db->ping, 'PONG', 'valkey ping');
   },
 ) or note($EVAL_ERROR);
 
