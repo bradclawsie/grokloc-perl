@@ -141,6 +141,15 @@ class VersionKey {
   method get_current {
     return get($current);
   }
+
+  sub unit ($self) {
+    my $key     = Key->rand;
+    my $current = uuid4;
+    return $self->new(
+      current => $current,
+      key_map => {$current => $key}
+    );
+  }
 }
 
 __END__
