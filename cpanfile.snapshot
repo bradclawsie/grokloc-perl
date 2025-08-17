@@ -473,6 +473,18 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Math::BigInt 0
       perl 5.006
+  DBD-Pg-3.18.0
+    pathname: T/TU/TURNSTEP/DBD-Pg-3.18.0.tar.gz
+    provides:
+      Bundle::DBD::Pg v3.18.0
+      DBD::Pg v3.18.0
+    requirements:
+      DBI 1.614
+      ExtUtils::MakeMaker 6.58
+      File::Temp 0
+      Test::More 0.88
+      Time::HiRes 0
+      version 0
   DBI-1.647
     pathname: H/HM/HMBRAND/DBI-1.647.tgz
     provides:
@@ -3460,6 +3472,13 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
+  local-lib-2.000029
+    pathname: H/HA/HAARG/local-lib-2.000029.tar.gz
+    provides:
+      lib::core::only undef
+      local::lib 2.000029
+    requirements:
+      perl 5.006
   multidimensional-0.014
     pathname: I/IL/ILMARI/multidimensional-0.014.tar.gz
     provides:
