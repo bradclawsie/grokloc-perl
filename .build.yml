@@ -5,6 +5,7 @@ packages:
   - perl-dbd-pg
   - postgresql
   - postgresql-libs
+  - valkey
 environment:
   PERL5LIB: "$HOME/grokloc-perl/lib:$HOME/grokloc-perl/local/lib/perl5"
 tasks:
@@ -15,6 +16,8 @@ tasks:
       sudo systemctl start postgresql.service && sleep 3
       just create-users create-databases alter-grants apply-schema
       popd
+  - valkey: |
+      sudo systemctl start valkey.service && sleep 1
   - deps: |
       pushd grokloc-perl
       mkdir -p local
