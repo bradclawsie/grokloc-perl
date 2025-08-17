@@ -35,4 +35,11 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok(
+  lives {
+    Org->default;
+    Org->rand;
+  },
+) or note($EVAL_ERROR);
+
 done_testing;

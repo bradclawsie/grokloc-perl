@@ -9,7 +9,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Org {
-  use Carp::Assert::More qw( assert_isa );
+  use Carp::Assert::More qw( assert_isa assert_nonblank );
   use GrokLOC::Models;
   use GrokLOC::Safe;
 
@@ -36,13 +36,29 @@ class Org {
 
   sub rand ($self) {
     my $meta = Meta->default;
-    $meta->Role = $Role::TEST;
+    $meta->set_role(Role->new(value => $Role::TEST));
     return $self->new(
       id    => ID->rand,
       meta  => $meta,
       name  => VarChar->rand,
       owner => ID->rand
     );
+  }
+
+  method insert ($txn,
+                 $owner_display_name,
+                 $owner_email,
+                 $owner_password,
+                 $owner_key_version,
+                 $version_key) {
+    assert_isa($txn, 'Mojo::Pg::Transaction',
+      'txn is not type Mojo::Pg::Transaction');
+    assert_isa($owner_display_name, 'VarChar',
+      'owner_display_name not type VarChar');
+    assert_isa($owner_email,    'VarChar',  'owner_email not type VarChar');
+    assert_isa($owner_password, 'Password', 'owner_password not type Password');
+    assert_nonblank($owner_key_version, 'owner_key_version malformed');
+    assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
   }
 
   method TO_JSON {

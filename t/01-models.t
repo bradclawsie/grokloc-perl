@@ -239,6 +239,38 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok(
+  dies {
+    my $meta = Meta->default;
+    $meta->set_role('not a Role instance');
+  },
+) or note($EVAL_ERROR);
+
+$meta = Meta->default;
+is($meta->role, Role->default);
+ok(
+  lives {
+    $meta->set_role(Role->new(value => $Role::TEST))
+  }
+) or note($EVAL_ERROR);
+is($meta->role, Role->new(value => $Role::TEST));
+
+ok(
+  dies {
+    my $meta = Meta->default;
+    $meta->set_status('not a Status instance');
+  },
+) or note($EVAL_ERROR);
+
+$meta = Meta->default;
+is($meta->status, Status->default);
+ok(
+  lives {
+    $meta->set_status(Status->new(value => $Status::INACTIVE));
+  }
+) or note($EVAL_ERROR);
+is($meta->status, Status->new(value => $Status::INACTIVE));
+
 is(parse($ID::NIL, $bin), 0, 'nil id is not uuid');
 is(is_null($bin),         1, 'nil id is not NULL uuid');
 unparse($bin, $str);

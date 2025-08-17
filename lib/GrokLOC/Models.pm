@@ -105,6 +105,16 @@ class Meta {
     );
   }
 
+  method set_role ($role_) {
+    assert_isa($role_, 'Role', 'role is not type Role');
+    $role = $role_;
+  }
+
+  method set_status ($status_) {
+    assert_isa($status_, 'Status', 'status is not type Status');
+    $status = $status_;
+  }
+
   method TO_JSON {
     return {
       ctime          => $ctime,
