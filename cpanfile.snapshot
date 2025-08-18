@@ -473,18 +473,6 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Math::BigInt 0
       perl 5.006
-  DBD-Pg-3.18.0
-    pathname: T/TU/TURNSTEP/DBD-Pg-3.18.0.tar.gz
-    provides:
-      Bundle::DBD::Pg v3.18.0
-      DBD::Pg v3.18.0
-    requirements:
-      DBI 1.614
-      ExtUtils::MakeMaker 6.58
-      File::Temp 0
-      Test::More 0.88
-      Time::HiRes 0
-      version 0
   DBI-1.647
     pathname: H/HM/HMBRAND/DBI-1.647.tgz
     provides:
