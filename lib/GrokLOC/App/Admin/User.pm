@@ -2,13 +2,14 @@ package GrokLOC::App::Admin::User;
 use v5.42;
 use strictures 2;
 use Object::Pad;
+use GrokLOC::Models;
 
 # ABSTRACT: User model support.
 
 our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
-class User {
+class User :does(WithID) : does(WithMeta) {
   use Carp::Assert::More    qw( assert assert_isa );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
@@ -17,8 +18,6 @@ class User {
   use GrokLOC::Safe;
   use UUID qw( clear is_null parse unparse uuid4 version );
 
-  field $id :param : reader;
-  field $meta :param : reader;
   field $api_key :param : reader;
   field $api_key_digest :param : reader;
   field $display_name :param : reader;
@@ -30,8 +29,6 @@ class User {
   field $key_version :param : reader;
 
   ADJUST {
-    assert_isa($id,           'ID',      'id is not type ID');
-    assert_isa($meta,         'Meta',    'meta is not type Meta');
     assert_isa($api_key,      'VarChar', 'api_key is not VarChar');
     assert_isa($display_name, 'VarChar', 'display_name is not VarChar');
     assert_isa($email,        'VarChar', 'email is not VarChar');
@@ -100,8 +97,8 @@ class User {
   # Omitted fields not intended for distribution.
   method TO_JSON {
     return {
-      id                  => $id->TO_JSON,
-      meta                => $meta->TO_JSON,
+      id                  => $self->id->TO_JSON,
+      meta                => $self->meta->TO_JSON,
       api_key             => $api_key->TO_JSON,
       api_key_digest      => $api_key_digest,
       display_name        => $display_name->TO_JSON,

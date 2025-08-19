@@ -22,8 +22,7 @@ class Role {
   field $value :param : reader;
 
   ADJUST {
-    assert(any { $_ == $value } 
-      ($NORMAL, $ADMIN, $TEST), 'value');
+    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
   }
 
   sub default ($self) {
@@ -48,8 +47,7 @@ class Status {
   field $value :param : reader;
 
   ADJUST {
-    assert(any { $_ == $value } 
-      ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
+    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
   }
 
   sub default ($self) {
@@ -72,8 +70,9 @@ class ID {
 
   ADJUST {
     my $bin = 0;
-    assert(parse($value, $bin) == 0 && (version($bin) == 4 
-        || is_null($bin)), 'value not uuidv4');
+    assert(parse($value, $bin) == 0 && (version($bin) == 4
+        || is_null($bin)),
+      'value not uuidv4');
   }
 
   sub default ($self) {
@@ -123,8 +122,7 @@ class Meta {
 
   ADJUST {
     my $now = time;
-    assert(int($ctime) == $ctime 
-      && $ctime >= 0 && $ctime <= $now, 'ctime');
+    assert(int($ctime) == $ctime && $ctime >= 0 && $ctime <= $now, 'ctime');
     assert(
       int($mtime) == $self->mtime
         && $mtime >= 0

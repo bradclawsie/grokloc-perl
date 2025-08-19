@@ -2,25 +2,22 @@ package GrokLOC::App::Admin::Org;
 use v5.42;
 use strictures 2;
 use Object::Pad;
+use GrokLOC::Models;
 
 # ABSTRACT: Organization model support.
 
 our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
-class Org {
+class Org :does(WithID) : does(WithMeta) {
   use Carp::Assert::More qw( assert_is assert_isa assert_nonblank );
   use GrokLOC::Models;
   use GrokLOC::Safe;
 
-  field $id :param : reader;
-  field $meta :param : reader;
   field $name :param : reader;
   field $owner :param : reader;
 
   ADJUST {
-    assert_isa($id,    'ID',      'id is not type ID');
-    assert_isa($meta,  'Meta',    'meta is not type Meta');
     assert_isa($name,  'VarChar', 'name is not type VarChar');
     assert_isa($owner, 'ID',      'owner is not type ID');
   }
@@ -62,7 +59,7 @@ class Org {
 
     # If $id is not $ID::NIL, then it is likely that this Org
     # has already been inserted; the db generates $id.
-    assert_is($id, $ID::NIL, 'db generates id on insert');
+    assert_is($self->id, $ID::NIL, 'db generates id on insert');
 
     my $q = <<~'INSERT_ORG';
     insert into orgs
@@ -76,9 +73,9 @@ class Org {
       $q,
       $name,
       $ID::NIL,    # Not known yet, see below.
-      $meta->role->value,
-      $meta->schema_version->value,
-      $meta->status->value
+      $self->meta->role->value,
+      $self->meta->schema_version->value,
+      $self->meta->status->value
     );
 
     $tx->commit;
@@ -88,8 +85,8 @@ class Org {
 
   method TO_JSON {
     return {
-      id    => $id->TO_JSON,
-      meta  => $meta->TO_JSON,
+      id    => $self->id->TO_JSON,
+      meta  => $self->meta->TO_JSON,
       name  => $name->TO_JSON,
       owner => $owner->TO_JSON
     };
