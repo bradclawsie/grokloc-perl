@@ -5,9 +5,11 @@ use Test2::V0               qw( done_testing note ok );
 use Test2::Tools::Exception qw( lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
+use GrokLOC::App::State;
+use GrokLOC::App::Admin::Org;
+use GrokLOC::Crypt;
 use GrokLOC::Models;
 use GrokLOC::Safe;
-use GrokLOC::App::Admin::Org;
 
 # ABSTRACT: test Org
 
@@ -41,5 +43,7 @@ ok(
     Org->rand;
   },
 ) or note($EVAL_ERROR);
+
+my $st = State->unit;
 
 done_testing;

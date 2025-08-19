@@ -121,6 +121,7 @@ my $get_key;
 ok(
   lives {
     $get_key = $version_key->get($current);
+    $version_key->current;
   },
 ) or note($EVAL_ERROR);
 

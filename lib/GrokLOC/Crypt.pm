@@ -147,8 +147,8 @@ class VersionKey {
     return $value;
   }
 
-  method get_current {
-    return get($current);
+  method current {
+    return $self->get($current);
   }
 }
 

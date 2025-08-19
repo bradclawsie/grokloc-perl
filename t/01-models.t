@@ -2,7 +2,7 @@ package main;
 use v5.42;
 use Cpanel::JSON::XS        ();
 use English                 qw(-no_match_vars);
-use Test2::V0               qw( done_testing is note ok );
+use Test2::V0               qw( done_testing is isnt note ok );
 use Test2::Tools::Exception qw( dies lives );
 use UUID                    qw( clear is_null parse unparse uuid4 );
 use strictures 2;
@@ -310,6 +310,65 @@ ok(
       Cpanel::JSON::XS->new->convert_blessed([true])->allow_nonref([true]);
     ID->new(value => $json->decode($json->encode(ID->new(value => uuid4()))));
   },
+) or note($EVAL_ERROR);
+
+# Roles testing.
+use Object::Pad;
+
+class WithIDTest :does(WithID) { }
+
+ok(
+  lives {
+    WithIDTest->new(id => ID->rand)->set_id(ID->rand);
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => 'not an ID');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => ID->rand)->set_id('not an ID');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => ID->rand)->set_id(ID->default);
+  }
+) or note($EVAL_ERROR);
+
+class WithMetaTest :does(WithMeta) { }
+
+ok(
+  lives {
+    my $m_ = Meta->default;
+    $m_->set_role(Role->new(value => $Role::ADMIN));
+    $m_->set_status(Status->new(value => $Status::INACTIVE));
+    my $m = WithMetaTest->new(meta => Meta->default);
+
+    # Verify they are different before assigning.
+    isnt($m->meta->role,   $m_->role,   'role');
+    isnt($m->meta->status, $m_->status, 'status');
+    $m->set_meta($m_);
+    is($m->meta->role,   $m_->role,   'role');
+    is($m->meta->status, $m_->status, 'status');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithMetaTest->new(meta => 'not a Meta');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithMetaTest->new(meta => Meta->default)->set_meta('not a Meta');
+  }
 ) or note($EVAL_ERROR);
 
 done_testing;

@@ -38,7 +38,7 @@ class Org {
     my $meta = Meta->default;
     $meta->set_role(Role->new(value => $Role::TEST));
     return $self->new(
-      id    => ID->rand,
+      id    => ID->default,
       meta  => $meta,
       name  => VarChar->rand,
       owner => ID->rand
@@ -65,7 +65,7 @@ class Org {
     assert_is($id, $ID::NIL, 'db generates id on insert');
 
     my $q = <<~'INSERT_ORG';
-    insert into orgs 
+    insert into orgs
     (name, owner, role, schema_version, status)
     values
     ($1, $2, $3, $4, $5)
@@ -82,6 +82,8 @@ class Org {
     );
 
     $tx->commit;
+
+    return $results;
   }
 
   method TO_JSON {

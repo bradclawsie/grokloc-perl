@@ -22,7 +22,8 @@ class Role {
   field $value :param : reader;
 
   ADJUST {
-    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
+    assert(any { $_ == $value } 
+      ($NORMAL, $ADMIN, $TEST), 'value');
   }
 
   sub default ($self) {
@@ -47,7 +48,8 @@ class Status {
   field $value :param : reader;
 
   ADJUST {
-    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
+    assert(any { $_ == $value } 
+      ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
   }
 
   sub default ($self) {
@@ -56,6 +58,54 @@ class Status {
 
   method TO_JSON {
     return $value;
+  }
+}
+
+class ID {
+  use Carp::Assert::More qw( assert );
+  use Readonly           ();
+  use UUID               qw( clear is_null parse unparse uuid4 version );
+
+  Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
+
+  field $value :param : reader;
+
+  ADJUST {
+    my $bin = 0;
+    assert(parse($value, $bin) == 0 && (version($bin) == 4 
+        || is_null($bin)), 'value not uuidv4');
+  }
+
+  sub default ($self) {
+    return $self->new(value => $NIL);
+  }
+
+  sub rand ($self) {
+    return $self->new(value => uuid4);
+  }
+
+  method TO_JSON {
+    return $value;
+  }
+}
+
+role WithID {
+  use Carp::Assert::More qw( assert_defined assert_isa assert_isnt );
+
+  field $id :param : reader;
+
+  ADJUST {
+    assert_defined($id, 'id not defined on object');
+    assert_isa($id, 'ID', 'type of id is not ID');
+  }
+
+  method set_id ($id_) {
+    assert_isa($id_, 'ID', 'type of id_ is not ID');
+
+    # Setting to $ID::NIL after construction is forbidden.
+    assert_isnt($id_->value, $ID::NIL, 'id value is ID::NIL');
+    $id = $id_;
+    return $self;
   }
 }
 
@@ -73,11 +123,12 @@ class Meta {
 
   ADJUST {
     my $now = time;
-    assert(int($ctime) == $ctime && $ctime >= 0 && $ctime <= $now, 'ctime');
+    assert(int($ctime) == $ctime 
+      && $ctime >= 0 && $ctime <= $now, 'ctime');
     assert(
-      int($mtime) == $mtime
+      int($mtime) == $self->mtime
         && $mtime >= 0
-        && $mtime >= $ctime
+        && $mtime >= $self->ctime
         && $mtime <= $now,
       'mtime',
     );
@@ -93,7 +144,7 @@ class Meta {
 
   sub default ($self) {
     my ($bin, $str);
-    clear($bin);    # null uuid
+    clear($bin);
     unparse($bin, $str);
     return $self->new(
       ctime          => 0,
@@ -108,11 +159,13 @@ class Meta {
   method set_role ($role_) {
     assert_isa($role_, 'Role', 'role is not type Role');
     $role = $role_;
+    return $self;
   }
 
   method set_status ($status_) {
     assert_isa($status_, 'Status', 'status is not type Status');
     $status = $status_;
+    return $self;
   }
 
   method TO_JSON {
@@ -127,31 +180,20 @@ class Meta {
   }
 }
 
-class ID {
-  use Carp::Assert::More qw( assert );
-  use Readonly           ();
-  use UUID               qw( clear is_null parse unparse uuid4 version );
+role WithMeta {
+  use Carp::Assert::More qw( assert_defined assert_isa );
 
-  Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
-
-  field $value :param : reader;
+  field $meta :param : reader;
 
   ADJUST {
-    my $bin = 0;
-    assert(parse($value, $bin) == 0 && (version($bin) == 4 || is_null($bin)),
-      'value not uuidv4');
+    assert_defined($meta, 'meta not defined on object');
+    assert_isa($meta, 'Meta', 'type of meta is not Meta');
   }
 
-  sub default ($self) {
-    return $self->new(value => $NIL);
-  }
-
-  sub rand ($self) {
-    return $self->new(value => uuid4);
-  }
-
-  method TO_JSON {
-    return $value;
+  method set_meta ($meta_) {
+    assert_isa($meta_, 'Meta', 'type of meta_ is not Meta');
+    $meta = $meta_;
+    return $self;
   }
 }
 
