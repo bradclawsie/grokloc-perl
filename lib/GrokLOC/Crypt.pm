@@ -115,7 +115,7 @@ class VersionKey {
   use UUID qw( parse uuid4 version );
 
   field $key_map :param;
-  field $current :param;
+  field $current :param : reader;
 
   ADJUST {
     assert_hashref($key_map, 'key_map not hashref');
@@ -145,10 +145,6 @@ class VersionKey {
     my $value = $key_map->{$key};
     assert_defined($value, 'no value for key in key_map');
     return $value;
-  }
-
-  method current {
-    return $self->get($current);
   }
 }
 

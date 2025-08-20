@@ -46,4 +46,15 @@ ok(
 
 my $st = State->unit;
 
+ok(
+  lives {
+    my $org = Org->rand;
+    my $tx  = $st->master->db->begin;
+    $org->insert($st->master->db, VarChar->rand, VarChar->rand, Password->rand,
+      $st->version_key->current,
+      $st->version_key);
+    $tx->commit;
+  },
+) or note($EVAL_ERROR);
+
 done_testing;

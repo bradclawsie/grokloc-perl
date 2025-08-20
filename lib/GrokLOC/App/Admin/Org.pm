@@ -38,18 +38,17 @@ class Org :does(WithID) : does(WithMeta) {
       id    => ID->default,
       meta  => $meta,
       name  => VarChar->rand,
-      owner => ID->rand
+      owner => ID->default
     );
   }
 
-  method insert ($tx,
+  method insert ($db,
                  $owner_display_name,
                  $owner_email,
                  $owner_password,
                  $owner_key_version,
                  $version_key) {
-    assert_isa($tx, 'Mojo::Pg::Transaction',
-      'tx is not type Mojo::Pg::Transaction');
+    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
     assert_isa($owner_display_name, 'VarChar',
       'owner_display_name not type VarChar');
     assert_isa($owner_email,    'VarChar',  'owner_email not type VarChar');
@@ -59,7 +58,7 @@ class Org :does(WithID) : does(WithMeta) {
 
     # If $id is not $ID::NIL, then it is likely that this Org
     # has already been inserted; the db generates $id.
-    assert_is($self->id, $ID::NIL, 'db generates id on insert');
+    assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
 
     my $q = <<~'INSERT_ORG';
     insert into orgs
@@ -69,16 +68,19 @@ class Org :does(WithID) : does(WithMeta) {
     returning id, ctime, mtime, signature
     INSERT_ORG
 
-    my $results = $tx->db->query(
+    my $results = $db->query(
       $q,
-      $name,
-      $ID::NIL,    # Not known yet, see below.
+      $name->value,
+
+      # The owner isn't known yet, so put in NIL
+      # until the owner is inserted, then update
+      # and set this org to status active (as of
+      # this statement it is still unconfirmed).
+      $ID::NIL,
       $self->meta->role->value,
-      $self->meta->schema_version->value,
+      $self->meta->schema_version,
       $self->meta->status->value
     );
-
-    $tx->commit;
 
     return $results;
   }
