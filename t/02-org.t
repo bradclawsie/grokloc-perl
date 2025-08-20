@@ -39,7 +39,7 @@ ok(
 
 ok(
   lives {
-    Org->default;
+    Org->default(VarChar->rand);
     Org->rand;
   },
 ) or note($EVAL_ERROR);

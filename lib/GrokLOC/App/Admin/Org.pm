@@ -22,11 +22,13 @@ class Org :does(WithID) : does(WithMeta) {
     assert_isa($owner, 'ID',      'owner is not type ID');
   }
 
-  sub default ($self) {
+  # Create a new Org with key fields initialized.
+  # This is what is used to create a new Org for insertion.
+  sub default ($self, $name) {
     return $self->new(
       id    => ID->default,
       meta  => Meta->default,
-      name  => VarChar->default,
+      name  => $name,
       owner => ID->default
     );
   }
@@ -83,6 +85,10 @@ class Org :does(WithID) : does(WithMeta) {
     );
 
     $self->set_id(ID->new(value => $insert_owner_results->hash->{id}));
+
+    # Create a new Meta for $self to be assigned with set_meta().
+    # Use the reutn values from user insert and update results.
+    # Return the owner User instance as well as their private key.
   }
 
   method TO_JSON {

@@ -10,13 +10,13 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class User :does(WithID) : does(WithMeta) {
-  use Carp::Assert::More    qw( assert assert_isa );
+  use Carp::Assert::More    qw( assert assert_isa assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
   use GrokLOC::Crypt;
   use GrokLOC::Models;
   use GrokLOC::Safe;
-  use UUID qw( clear is_null parse unparse uuid4 version );
+  use UUID qw( is_null parse uuid4 version );
 
   field $api_key :param : reader;
   field $api_key_digest :param : reader;
@@ -29,68 +29,75 @@ class User :does(WithID) : does(WithMeta) {
   field $key_version :param : reader;
 
   ADJUST {
-    assert_isa($api_key,      'VarChar', 'api_key is not VarChar');
-    assert_isa($display_name, 'VarChar', 'display_name is not VarChar');
-    assert_isa($email,        'VarChar', 'email is not VarChar');
-    assert_isa($org,          'ID',      'org is not type ID');
+    # Although api_key may be user provided, it is not
+    # displayed content, so it doesn't need to be passed
+    # through VarChar.
+    assert_nonblank($api_key, 'api_key is malformed');
+
+    assert_isa($display_name, 'VarChar',  'display_name is not VarChar');
+    assert_isa($email,        'VarChar',  'email is not VarChar');
+    assert_isa($org,          'ID',       'org is not type ID');
+    assert_isa($password,     'Password', 'password is not type Password');
+
     my $bin = 0;
     assert(parse($key_version, $bin) == 0
         && (version($bin) == 4 || is_null($bin)),
       'key_version not uuidv4');
   }
 
-  sub default ($self) {
-    my ($bin, $str) = (0, q{});
-    clear($bin);
-    unparse($bin, $str);
-    return $self->new(
-      id                  => ID->default,
-      meta                => Meta->default,
-      api_key             => VarChar->default,
-      api_key_digest      => q{},
-      display_name        => VarChar->default,
-      display_name_digest => q{},
-      email               => VarChar->default,
-      email_digest        => q{},
-      org                 => ID->default,
-      password            => q{},
-      key_version         => $str
-    );
-  }
+  # Create a new User with key fields initialized.
+  # This is what is used to create a new User for insertion.
+  sub default ($self, $display_name, $email, $org, $password, $key_version) {
 
-  # Return a random User as if it was read from the
-  # database (decrypted). Also provide seed plaintext
-  # password and api private key.
-  sub rand ($self) {
-    my $pt       = uuid4;                 # Plaintext password.
-    my $password = Password->from($pt);
+    # Check these early as their respective ->values are needed here.
+    assert_isa($display_name, 'VarChar', 'display_name is not VarChar');
+    assert_isa($email,        'VarChar', 'email is not VarChar');
 
-    my ($display_name, $email) = (uuid4, uuid4);
-    my $display_name_digest = sha256_hex($display_name);
-    my $email_digest        = sha256_hex($email);
+    my $display_name_digest = sha256_hex($display_name->value);
+    my $email_digest        = sha256_hex($email->value);
 
     my $pk                = Crypt::PK::Ed25519->new->generate_key;
     my $private_key       = $pk->export_key_jwk('private');
     my $public_key        = $pk->export_key_jwk('public');
     my $public_key_digest = sha256_hex($public_key);
 
-    my $meta = Meta->default;
-    $meta->Role = $Role::TEST;
-
-    my $user = $self->new(
-      id                  => ID->rand(),
-      meta                => $meta,
-      api_key             => VarChar->trusted($public_key),
-      api_key_digest      => $public_key_digest,
-      display_name        => VarChar->default(),
-      display_name_digest => $display_name_digest,
-      email               => VarChar->default(),
-      email_digest        => $email_digest,
-      org                 => ID->default(),
-      password            => $password,
-      key_version         => uuid4()
+    # Caller gets new User and their private key.
+    return (
+      $self->new(
+        id                  => ID->default,
+        meta                => Meta->default,
+        api_key             => $public_key,
+        api_key_digest      => $public_key_digest,
+        display_name        => $display_name,
+        display_name_digest => $display_name_digest,
+        email               => $email,
+        email_digest        => $email_digest,
+        org                 => $org,
+        password            => $password,
+        key_version         => $key_version
+      ),
+      $private_key
     );
 
+  }
+
+  # Return a random User as if it was read from the
+  # database (decrypted). Also return private key
+  # and plaintext password.
+  # If a real $org and $key_version are returned,
+  # the returned User is insertable.
+  sub rand ($self, $org, $key_version) {
+    my $pt       = uuid4;                 # Plaintext password.
+    my $password = Password->from($pt);
+
+    my $display_name = VarChar->rand;
+    my $email        = VarChar->rand;
+
+    my ($user, $private_key) =
+      $self->default($display_name, $email, $org, $password, $key_version);
+
+    # Random user should have test role.
+    $user->meta->set_role(Role->new(value => $Role::TEST));
     return ($user, $private_key, $pt);
   }
 
