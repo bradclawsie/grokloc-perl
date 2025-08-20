@@ -124,9 +124,9 @@ class Meta {
     my $now = time;
     assert(int($ctime) == $ctime && $ctime >= 0 && $ctime <= $now, 'ctime');
     assert(
-      int($mtime) == $self->mtime
+      int($mtime) == $mtime
         && $mtime >= 0
-        && $mtime >= $self->ctime
+        && $mtime >= $ctime
         && $mtime <= $now,
       'mtime',
     );
