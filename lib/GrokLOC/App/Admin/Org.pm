@@ -68,7 +68,7 @@ class Org :does(WithID) : does(WithMeta) {
     returning id, ctime, mtime, signature
     INSERT_ORG
 
-    my $results = $db->query(
+    my $insert_owner_results = $db->query(
       $q,
       $name->value,
 
@@ -82,7 +82,7 @@ class Org :does(WithID) : does(WithMeta) {
       $self->meta->status->value
     );
 
-    return $results;
+    $self->set_id(ID->new(value => $insert_owner_results->hash->{id}));
   }
 
   method TO_JSON {
