@@ -10,7 +10,8 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class User :does(WithID) : does(WithMeta) {
-  use Carp::Assert::More    qw( assert assert_isa assert_nonblank );
+  use Carp::Assert::More
+    qw( assert assert_is assert_isa assert_isnt assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
   use GrokLOC::Crypt;
@@ -99,6 +100,70 @@ class User :does(WithID) : does(WithMeta) {
     # Random user should have test role.
     $user->meta->set_role(Role->new(value => $Role::TEST));
     return ($user, $private_key, $pt);
+  }
+
+  method insert ($db, $version_key) {
+    assert_isa($db, 'Mojo::Pg::Database',  'db is not type Mojo::Pg::Database');
+    assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
+
+    # If $id is not $ID::NIL, then it is likely that this Org
+    # has already been inserted; the db generates $id.
+    assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
+
+    # Catch a nil Org; this is always an error.
+    assert_isnt($self->org->value, $ID::NIL, 'org is ID::NIL');
+
+    my $encryption_key = $version_key->get($key_version);
+    assert_isa($encryption_key, 'Key', 'encryption_key is not type Key');
+
+    my $iv = IV->rand;
+    my $encrypted_api_key =
+      AESGCM->encrypt($api_key, $encryption_key->value, $iv->value);
+    my $encrypted_display_name =
+      AESGCM->encrypt($display_name, $encryption_key->value, $iv->value);
+    my $encrypted_email =
+      AESGCM->encrypt($email, $encryption_key->value, $iv->value);
+
+    my $q = <<~'INSERT_USER';
+    insert into users
+    (api_key,
+    api_key_digest,
+    display_name,
+    display_name_digest,
+    email,
+    email_digest,
+    key_version,
+    org,
+    password,
+    role,
+    schema_version,
+    status)
+    values
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+    returning id, ctime, mtime, signature
+    INSERT_USER
+
+    my $insert_user_results = $db->query(
+      $q,                       $encrypted_api_key,
+      $api_key_digest,          $encrypted_display_name,
+      $display_name_digest,     $encrypted_email,
+      $email_digest,            $key_version,
+      $org->value,              $password->value,
+      $self->meta->role->value, $self->meta->schema_version,
+      $self->meta->status->value
+    );
+
+    my $returning = $insert_user_results->hash;
+    $self->set_id(ID->new(value => $returning->{id}));
+    my $meta = Meta->new(
+      ctime          => $returning->{ctime},
+      mtime          => $returning->{mtime},
+      role           => $self->meta->role,
+      schema_version => $self->meta->schema_version,
+      signature      => $returning->{signature},
+      status         => $self->meta->status
+    );
+    $self->set_meta($meta);
   }
 
   # Omitted fields not intended for distribution.

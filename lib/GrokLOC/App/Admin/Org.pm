@@ -84,7 +84,8 @@ class Org :does(WithID) : does(WithMeta) {
       $self->meta->status->value
     );
 
-    $self->set_id(ID->new(value => $insert_owner_results->hash->{id}));
+    my $insert_owner_returning = $insert_owner_results->hash;
+    $self->set_id(ID->new(value => $insert_owner_returning->{id}));
 
     # Create a new Meta for $self to be assigned with set_meta().
     # Use the reutn values from user insert and update results.

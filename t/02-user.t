@@ -8,6 +8,7 @@ use strictures 2;
 use GrokLOC::App::Admin::User;
 use GrokLOC::Models;
 use GrokLOC::Safe;
+use GrokLOC::App::State;
 
 # ABSTRACT: test User
 
@@ -17,6 +18,15 @@ our $AUTHORITY = 'cpan:bclawsie';
 ok(
   lives {
     User->rand(ID->rand, uuid4);
+  },
+) or note($EVAL_ERROR);
+
+my $st = State->unit;
+
+ok(
+  lives {
+    my ($user, undef, undef) = User->rand(ID->rand, $st->version_key->current);
+    $user->insert($st->master->db, $st->version_key);
   },
 ) or note($EVAL_ERROR);
 
