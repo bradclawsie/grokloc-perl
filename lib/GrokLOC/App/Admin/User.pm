@@ -11,7 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class User :does(WithID) : does(WithMeta) {
   use Carp::Assert::More
-    qw( assert assert_is assert_isa assert_isnt assert_nonblank );
+    qw( assert assert_defined assert_is assert_isa assert_isnt assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
   use GrokLOC::Crypt;
@@ -101,6 +101,59 @@ class User :does(WithID) : does(WithMeta) {
     return ($user, $private_key, $pt);
   }
 
+  sub read ($self, $db, $id, $version_key) {
+    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
+    assert_isa($id, 'ID',                 'id is not type ID');
+    assert_isa($version_key, 'VersionKey',
+      'version_key is not type VersionKey');
+
+    my $user_read_query = 'select * from users where id = $1';
+    my $user_row        = $db->query($user_read_query, $id->value)->hash;
+
+    for my $col (qw(ctime mtime role schema_version signature status)) {
+      assert_defined($user_row->{$col}, "$col not defined");
+    }
+
+    my $meta = Meta->new(
+      ctime          => $user_row->{ctime},
+      mtime          => $user_row->{mtime},
+      role           => Role->new(value => $user_row->{role}),
+      schema_version => $user_row->{schema_version},
+      signature      => $user_row->{signature},
+      status         => Status->new(value => $user_row->{status})
+    );
+
+    for my $col (
+      qw(id api_key api_key_digest display_name
+      display_name_digest email email_digest org password key_version)
+      )
+    {
+      assert_defined($user_row->{$col}, "$col not defined");
+    }
+
+    my $encryption_key = $version_key->get($user_row->{key_version});
+    my $decrypted_api_key =
+      AESGCM->decrypt($user_row->{api_key}, $encryption_key->value);
+    my $decrypted_display_name =
+      AESGCM->decrypt($user_row->{display_name}, $encryption_key->value);
+    my $decrypted_email =
+      AESGCM->decrypt($user_row->{email}, $encryption_key->value);
+
+    return $self->new(
+      id                  => ID->new(value => $user_row->{id}),
+      meta                => $meta,
+      api_key             => $decrypted_api_key,
+      api_key_digest      => $user_row->{api_key_digest},
+      display_name        => VarChar->trusted($decrypted_display_name),
+      display_name_digest => $user_row->{display_name_digest},
+      email               => VarChar->trusted($decrypted_email),
+      email_digest        => $user_row->{email_digest},
+      org                 => ID->new(value => $user_row->{org}),
+      password            => Password->new(value => $user_row->{password}),
+      key_version         => $user_row->{key_version}
+    );
+  }
+
   method insert ($db, $version_key) {
     assert_isa($db, 'Mojo::Pg::Database',  'db is not type Mojo::Pg::Database');
     assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
@@ -119,9 +172,9 @@ class User :does(WithID) : does(WithMeta) {
     my $encrypted_api_key =
       AESGCM->encrypt($api_key, $encryption_key->value, $iv->value);
     my $encrypted_display_name =
-      AESGCM->encrypt($display_name, $encryption_key->value, $iv->value);
+      AESGCM->encrypt($display_name->value, $encryption_key->value, $iv->value);
     my $encrypted_email =
-      AESGCM->encrypt($email, $encryption_key->value, $iv->value);
+      AESGCM->encrypt($email->value, $encryption_key->value, $iv->value);
 
     my $insert_user_query = <<~'INSERT_USER';
     insert into users

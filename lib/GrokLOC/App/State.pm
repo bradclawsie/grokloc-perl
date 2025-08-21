@@ -32,10 +32,7 @@ class State {
   # field $root_org :param :reader;
   # field $root_user :param :reader;
 
-  # `new` should be wrapped in `try/catch`.
   ADJUST {
-    # Check fields in order above.
-
     # api_version
     assert_nonnegative_integer($api_version, 'api_version not nonnegative int');
 
