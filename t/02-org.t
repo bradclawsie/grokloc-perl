@@ -2,7 +2,7 @@ package main;
 use v5.42;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing note ok );
-use Test2::Tools::Exception qw( lives );
+use Test2::Tools::Exception qw( dies lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::App::State;
@@ -50,8 +50,25 @@ ok(
   lives {
     my $org = Org->rand;
     my $tx  = $st->master->db->begin;
-    $org->insert($st->master->db, VarChar->rand, VarChar->rand, Password->rand,
-      $st->version_key->current,
+    my $owner =
+      $org->insert($st->master->db, VarChar->rand, VarChar->rand,
+      Password->rand, $st->version_key->current,
+      $st->version_key);
+    $tx->commit;
+  },
+) or note($EVAL_ERROR);
+
+# TODO confirm that $owner is not in db to confirm rollback.
+ok(
+  dies {
+    my $org = Org->rand;
+
+    # Setting id to ID::NIL will preclude insert.
+    $org->set_id(ID->default);
+    my $tx = $st->master->db->begin;
+    my $owner =
+      $org->insert($st->master->db, VarChar->rand, VarChar->rand,
+      Password->rand, $st->version_key->current,
       $st->version_key);
     $tx->commit;
   },
