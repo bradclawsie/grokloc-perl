@@ -79,7 +79,6 @@ class User :does(WithID) : does(WithMeta) {
       ),
       $private_key
     );
-
   }
 
   # Return a random User as if it was read from the
@@ -124,7 +123,7 @@ class User :does(WithID) : does(WithMeta) {
     my $encrypted_email =
       AESGCM->encrypt($email, $encryption_key->value, $iv->value);
 
-    my $q = <<~'INSERT_USER';
+    my $insert_user_query = <<~'INSERT_USER';
     insert into users
     (api_key,
     api_key_digest,
@@ -144,7 +143,7 @@ class User :does(WithID) : does(WithMeta) {
     INSERT_USER
 
     my $insert_user_results = $db->query(
-      $q,                       $encrypted_api_key,
+      $insert_user_query,       $encrypted_api_key,
       $api_key_digest,          $encrypted_display_name,
       $display_name_digest,     $encrypted_email,
       $email_digest,            $key_version,
@@ -153,14 +152,14 @@ class User :does(WithID) : does(WithMeta) {
       $self->meta->status->value
     );
 
-    my $returning = $insert_user_results->hash;
-    $self->set_id(ID->new(value => $returning->{id}));
+    my $insert_user_returning = $insert_user_results->hash;
+    $self->set_id(ID->new(value => $insert_user_returning->{id}));
     my $meta = Meta->new(
-      ctime          => $returning->{ctime},
-      mtime          => $returning->{mtime},
+      ctime          => $insert_user_returning->{ctime},
+      mtime          => $insert_user_returning->{mtime},
       role           => $self->meta->role,
       schema_version => $self->meta->schema_version,
-      signature      => $returning->{signature},
+      signature      => $insert_user_returning->{signature},
       status         => $self->meta->status
     );
     $self->set_meta($meta);

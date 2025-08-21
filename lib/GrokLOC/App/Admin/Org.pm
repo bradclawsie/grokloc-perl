@@ -11,6 +11,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Org :does(WithID) : does(WithMeta) {
   use Carp::Assert::More qw( assert_is assert_isa assert_nonblank );
+  use GrokLOC::App::Admin::User;
   use GrokLOC::Models;
   use GrokLOC::Safe;
 
@@ -62,7 +63,8 @@ class Org :does(WithID) : does(WithMeta) {
     # has already been inserted; the db generates $id.
     assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
 
-    my $q = <<~'INSERT_ORG';
+    # Insert Org with nil owner for now.
+    my $insert_org_query = <<~'INSERT_ORG';
     insert into orgs
     (name, owner, role, schema_version, status)
     values
@@ -70,8 +72,8 @@ class Org :does(WithID) : does(WithMeta) {
     returning id, ctime, mtime, signature
     INSERT_ORG
 
-    my $insert_owner_results = $db->query(
-      $q,
+    my $insert_org_results = $db->query(
+      $insert_org_query,
       $name->value,
 
       # The owner isn't known yet, so put in NIL
@@ -84,12 +86,59 @@ class Org :does(WithID) : does(WithMeta) {
       $self->meta->status->value
     );
 
-    my $insert_owner_returning = $insert_owner_results->hash;
-    $self->set_id(ID->new(value => $insert_owner_returning->{id}));
+    my $insert_org_returning = $insert_org_results->hash;
+    $self->set_id(ID->new(value => $insert_org_returning->{id}));
 
-    # Create a new Meta for $self to be assigned with set_meta().
-    # Use the reutn values from user insert and update results.
-    # Return the owner User instance as well as their private key.
+    # Create and insert owner.
+    my ($owner_user, $owner_private_key) = User->default(
+      $owner_display_name, $owner_email, $self->id,
+      $owner_password,     $owner_key_version
+    );
+
+    # Owner is considered active by default.
+    $owner_user->meta->set_status(Status->new(value => $Status::ACTIVE));
+
+    $owner_user->insert($db, $version_key);
+
+    # Reminder: $owner is field in $self.
+    $owner = ID->new(value => $owner_user->id->value);
+
+    # Update the org with the actual owner information
+    # and set it to active so it can be used.
+    my $update_org_query = <<~'UPDATE_ORG';
+    update orgs set
+    owner = $1,
+    status = $2
+    where id = $3
+    returning mtime, signature
+    UPDATE_ORG
+
+    my $update_org_results =
+      $db->query($update_org_query, $owner->value,
+      Status->new(value => $Status::ACTIVE)->value,
+      $self->id->value);
+    my $update_org_returning = $update_org_results->hash;
+
+    # Reset metadata to reflect update active state etc.
+    $self->set_meta(
+      Meta->new(
+        ctime          => $insert_org_returning->{ctime},
+        mtime          => $update_org_returning->{mtime},
+        role           => Role->new(value => $self->meta->role->value),
+        schema_version => $self->meta->schema_version,
+        signature      => $update_org_returning->{signature},
+        status         => Status->new(value => $Status::ACTIVE)
+      )
+    );
+
+    assert_is($owner_user->org->value, $self->id->value,
+      'owner org not org id');
+    assert_is($owner_user->id->value,     $owner->value,   'owner id mismatch');
+    assert_is($self->meta->status->value, $Status::ACTIVE, 'org not active');
+    assert_is($owner_user->meta->status->value,
+      $Status::ACTIVE, 'owner not active');
+
+    return $owner;
   }
 
   method TO_JSON {
