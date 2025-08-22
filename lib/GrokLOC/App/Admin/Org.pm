@@ -10,7 +10,8 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Org :does(WithID) : does(WithMeta) {
-  use Carp::Assert::More qw( assert_is assert_isa assert_nonblank );
+  use Carp::Assert::More
+    qw( assert_defined assert_is assert_isa assert_nonblank );
   use GrokLOC::App::Admin::User;
   use GrokLOC::Models;
   use GrokLOC::Safe;
@@ -42,6 +43,26 @@ class Org :does(WithID) : does(WithMeta) {
       meta  => $meta,
       name  => VarChar->rand,
       owner => ID->default
+    );
+  }
+
+  sub read ($self, $db, $id) {
+    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
+    assert_isa($id, 'ID',                 'id is not type ID');
+
+    my $org_read_query = 'select * from orgs where id = $1';
+    my $org_row        = $db->query($org_read_query, $id->value)->hash;
+    my $meta           = Meta->from_hashref($org_row);
+
+    for my $col (qw(id name owner)) {
+      assert_defined($org_row->{$col}, "$col not defined");
+    }
+
+    return $self->new(
+      id    => ID->new(value => $org_row->{id}),
+      meta  => $meta,
+      name  => VarChar->trusted($org_row->{name}),
+      owner => ID->new(value => $org_row->{owner}),
     );
   }
 

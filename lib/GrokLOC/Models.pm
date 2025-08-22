@@ -110,7 +110,7 @@ role WithID {
 
 class Meta {
   use Carp::Assert::More
-    qw( assert assert_isa assert_nonnegative assert_numeric );
+    qw( assert assert_defined assert_hashref assert_isa assert_nonnegative assert_numeric );
   use UUID qw( clear is_null parse unparse uuid4 version );
 
   field $ctime :param : reader;
@@ -152,6 +152,23 @@ class Meta {
       signature      => $str,
       status         => Status->default,
     );
+
+    sub from_hashref ($self, $hashref) {
+      assert_hashref($hashref, 'not hashref');
+
+      for my $col (qw(ctime mtime role schema_version signature status)) {
+        assert_defined($hashref->{$col}, "$col not defined");
+      }
+
+      return $self->new(
+        ctime          => $hashref->{ctime},
+        mtime          => $hashref->{mtime},
+        role           => Role->new(value => $hashref->{role}),
+        schema_version => $hashref->{schema_version},
+        signature      => $hashref->{signature},
+        status         => Status->new(value => $hashref->{status})
+      );
+    }
   }
 
   method set_role ($role_) {

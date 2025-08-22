@@ -33,7 +33,7 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
-is($user->id->value,      $read_user->id->value,      'read id');
+is($user->id,             $read_user->id,             'read id');
 is($user->meta,           $read_user->meta,           'read meta');
 is($user->api_key,        $read_user->api_key,        'read api_key');
 is($user->api_key_digest, $read_user->api_key_digest, 'read api_key');
@@ -43,9 +43,9 @@ is(
   $read_user->display_name_digest,
   'read display_name'
 );
-is($user->email,           $read_user->email,           'read email');
-is($user->email_digest,    $read_user->email_digest,    'read email');
-is($user->org->value,      $read_user->org->value,      'read org');
-is($user->password->value, $read_user->password->value, 'read password');
+is($user->email,        $read_user->email,        'read email');
+is($user->email_digest, $read_user->email_digest, 'read email');
+is($user->org,          $read_user->org,          'read org');
+is($user->password,     $read_user->password,     'read password');
 
 done_testing;

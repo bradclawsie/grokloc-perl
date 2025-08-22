@@ -109,19 +109,7 @@ class User :does(WithID) : does(WithMeta) {
 
     my $user_read_query = 'select * from users where id = $1';
     my $user_row        = $db->query($user_read_query, $id->value)->hash;
-
-    for my $col (qw(ctime mtime role schema_version signature status)) {
-      assert_defined($user_row->{$col}, "$col not defined");
-    }
-
-    my $meta = Meta->new(
-      ctime          => $user_row->{ctime},
-      mtime          => $user_row->{mtime},
-      role           => Role->new(value => $user_row->{role}),
-      schema_version => $user_row->{schema_version},
-      signature      => $user_row->{signature},
-      status         => Status->new(value => $user_row->{status})
-    );
+    my $meta            = Meta->from_hashref($user_row);
 
     for my $col (
       qw(id api_key api_key_digest display_name
