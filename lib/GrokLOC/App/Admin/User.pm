@@ -10,6 +10,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class User :does(WithID) : does(WithMeta) {
+  use Carp qw( croak );
   use Carp::Assert::More
     qw( assert assert_defined assert_is assert_isa assert_isnt assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
@@ -109,7 +110,10 @@ class User :does(WithID) : does(WithMeta) {
 
     my $user_read_query = 'select * from users where id = $1';
     my $user_row        = $db->query($user_read_query, $id->value)->hash;
-    my $meta            = Meta->from_hashref($user_row);
+
+    # Croak on errors that are catch-able.
+    croak 'no rows' unless (defined($user_row));
+    my $meta = Meta->from_hashref($user_row);
 
     for my $col (
       qw(id api_key api_key_digest display_name
@@ -151,7 +155,7 @@ class User :does(WithID) : does(WithMeta) {
     assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
 
     # Catch a nil Org; this is always an error.
-    assert_isnt($self->org->value, $ID::NIL, 'org is ID::NIL');
+    assert_isnt($self->org->value, $ID::NIL, 'org is nil');
 
     my $encryption_key = $version_key->get($key_version);
     assert_isa($encryption_key, 'Key', 'encryption_key is not type Key');

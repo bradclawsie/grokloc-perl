@@ -2,9 +2,11 @@ package main;
 use v5.42;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
+use Test2::Tools::Compare   qw( like );
 use Test2::Tools::Exception qw( lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
+use feature 'try';
 use GrokLOC::App::Admin::User;
 use GrokLOC::Models;
 use GrokLOC::Safe;
@@ -47,5 +49,18 @@ is($user->email,        $read_user->email,        'read email');
 is($user->email_digest, $read_user->email_digest, 'read email');
 is($user->org,          $read_user->org,          'read org');
 is($user->password,     $read_user->password,     'read password');
+
+# user not found
+ok(
+  lives {
+    my $replica = $st->random_replica;
+    try {
+      User->read($replica->db, ID->rand, $st->version_key);
+    }
+    catch ($e) {
+      like($e, qr/^no rows/);
+    }
+  },
+) or note($EVAL_ERROR);
 
 done_testing;

@@ -2,6 +2,7 @@ package main;
 use v5.42;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
+use Test2::Tools::Compare   qw( like );
 use Test2::Tools::Exception qw( dies lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
@@ -66,7 +67,6 @@ is($org->meta,  $read_org->meta,  'read meta');
 is($org->name,  $read_org->name,  'read name');
 is($org->owner, $read_org->owner, 'read owner');
 
-# TODO confirm that $owner is not in db to confirm rollback.
 ok(
   dies {
     my $org = Org->rand;
@@ -79,6 +79,19 @@ ok(
       Password->rand, $st->version_key->current,
       $st->version_key);
     $tx->commit;
+  },
+) or note($EVAL_ERROR);
+
+# org not found
+ok(
+  lives {
+    my $replica = $st->random_replica;
+    try {
+      Org->read($replica->db, ID->rand);
+    }
+    catch ($e) {
+      like($e, qr/^no rows/);
+    }
   },
 ) or note($EVAL_ERROR);
 

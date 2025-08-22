@@ -10,6 +10,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Org :does(WithID) : does(WithMeta) {
+  use Carp qw( croak );
   use Carp::Assert::More
     qw( assert_defined assert_is assert_isa assert_nonblank );
   use GrokLOC::App::Admin::User;
@@ -52,7 +53,10 @@ class Org :does(WithID) : does(WithMeta) {
 
     my $org_read_query = 'select * from orgs where id = $1';
     my $org_row        = $db->query($org_read_query, $id->value)->hash;
-    my $meta           = Meta->from_hashref($org_row);
+
+    # Croak on errors that are catch-able.
+    croak 'no rows' unless (defined($org_row));
+    my $meta = Meta->from_hashref($org_row);
 
     for my $col (qw(id name owner)) {
       assert_defined($org_row->{$col}, "$col not defined");
@@ -82,7 +86,7 @@ class Org :does(WithID) : does(WithMeta) {
 
     # If $id is not $ID::NIL, then it is likely that this Org
     # has already been inserted; the db generates $id.
-    assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
+    assert_is($self->id->value, $ID::NIL, 'id is not nil');
 
     # Insert Org with nil owner for now.
     my $insert_org_query = <<~'INSERT_ORG';
