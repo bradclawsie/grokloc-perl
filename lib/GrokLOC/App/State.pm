@@ -14,6 +14,7 @@ class State {
   use Mojo::Pg;
   use Mojo::Redis;
   use UUID qw( uuid4 );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
   use GrokLOC::Crypt;
   use GrokLOC::Models;
 
@@ -82,6 +83,37 @@ class State {
     return $replicas->[ int rand @{$replicas} ];
   }
 
+  method TO_STRING {
+    my $default_role_ = "$default_role";
+    my $master_dsn_   = "$master_dsn";
+    $master_dsn_ =~ s/\:(?:[^\@]+)\@/:****@/sgx;
+    my $replica_dsns_ = join(', ', @{$replica_dsns});
+    $replica_dsns_ =~ s/\:(?:[^\@]+)\@/:****@/sgx;
+    my $version_key_ = "$version_key";
+    return
+        "State(api_version => $api_version, "
+      . "default_role => $default_role_, "
+      . "master_dsn => $master_dsn_, "
+      . "replica_dsns => [$replica_dsns_], "
+      . "repository_base => $repository_base, "
+      . "signing_key => $signing_key, "
+      . "valkey_dsn => $valkey_dsn, "
+      . "version_key => $version_key_)";
+  }
+
+  method TO_BOOL {
+    return
+         defined($api_version)
+      && defined($default_role)
+      && defined($master_dsn)
+      && defined($master)
+      && defined($replica_dsns)
+      && defined($replicas)
+      && defined($repository_base)
+      && defined($signing_key)
+      && defined($valkey_dsn)
+      && defined($version_key) ? true : false;
+  }
 }
 
 __END__

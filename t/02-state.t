@@ -14,6 +14,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 ok(
   lives {
     my $st = State->unit;
+    is($st ? true : false, true, 'boolean context');
 
     is($st->master->db->ping, 1, 'master ping');
     for my $replica (@{$st->replicas}) {
