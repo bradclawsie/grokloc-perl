@@ -51,14 +51,23 @@ my ($org, $read_org);
 ok(
   lives {
     $org = Org->rand;
+
+    # Not inserted yet, so evaluates to false.
+    is($org ? true : false, false, 'boolean context');
+
     my $tx = $st->master->db->begin;
     my $owner =
       $org->insert($st->master->db, VarChar->rand, VarChar->rand,
       Password->rand, $st->version_key->current,
       $st->version_key);
     $tx->commit;
+
+    # Now $org has post-insert metadata, so it evaluates to true.
+    is($org ? true : false, true, 'boolean context');
+
     my $replica = $st->random_replica;
     $read_org = Org->read($replica->db, $org->id);
+    is($read_org ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 

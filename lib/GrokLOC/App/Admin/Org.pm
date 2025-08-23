@@ -13,6 +13,7 @@ class Org :does(WithID) : does(WithMeta) {
   use Carp qw( croak );
   use Carp::Assert::More
     qw( assert_defined assert_is assert_isa assert_nonblank );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
   use GrokLOC::App::Admin::User;
   use GrokLOC::Models;
   use GrokLOC::Safe;
@@ -171,6 +172,36 @@ class Org :does(WithID) : does(WithMeta) {
 
     my $users =
       $db->query('select id from users where org = $1', $self->id->value);
+  }
+
+  method TO_STRING {
+    my $self_id   = $self->id;
+    my $id_       = "$self_id";
+    my $self_meta = $self->meta;
+    my $meta_     = "$self_meta";
+    my $name_     = "$name";
+    my $owner_    = "$owner";
+
+    return
+        "Org(id => $id_, "
+      . "meta => $meta_, "
+      . "name => $name_, "
+      . "owner => $owner_)";
+  }
+
+  # Will not evaluate to true unless populated with
+  # db metadata.
+  method TO_BOOL {
+    return
+         defined($self->id)
+      && ($self->id->value ne $ID::NIL)
+      && defined($self->meta)
+      && ($self->meta->ctime != 0)
+      && ($self->meta->mtime != 0)
+      && ($self->meta->signature ne q{})
+      && defined($name)
+      && defined($owner)
+      && ($owner->value ne $ID::NIL);
   }
 
   method TO_JSON {
