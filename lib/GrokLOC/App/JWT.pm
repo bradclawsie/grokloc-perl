@@ -15,6 +15,7 @@ class JWT {
   use Crypt::JWT qw( decode_jwt encode_jwt );
   use Net::IP    qw( ip_is_ipv4 ip_is_ipv6 );
   use Readonly   ();
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
   use GrokLOC::Models;
 
   Readonly::Scalar our $TOKEN_TYPE => 'Bearer';
@@ -71,6 +72,21 @@ class JWT {
 
   method to_header ($signing_key) {
     return $TOKEN_TYPE . q{ } . $self->encode($signing_key);
+  }
+
+  method TO_STRING {
+    my $sub_ = "$sub";
+    return "JWT(exp => $exp, nbf => $nbf, iss => $iss, "
+      . "sub => $sub_, cip => $cip)";
+  }
+
+  method TO_BOOL {
+    return
+         defined($exp)
+      && defined($nbf)
+      && defined($iss)
+      && defined($sub)
+      && defined($cip) ? true : false;
   }
 }
 

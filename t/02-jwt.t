@@ -23,6 +23,7 @@ ok(
       sub => ID->rand,
       cip => '127.0.0.1'
     );
+    is($token ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
