@@ -17,6 +17,7 @@ my $iv;
 ok(
   lives {
     $iv = IV->new(value => IV->rand()->value);
+    is($iv ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
@@ -33,6 +34,7 @@ my $key;
 ok(
   lives {
     $key = Key->new(value => Key->rand()->value);
+    is($key ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
@@ -69,6 +71,7 @@ ok(
   lives {
     Password->new(value => Password->rand()->value);
     $pw = Password->from($s);
+    is($pw ? true : false, true, 'boolean context');
     Password->new(value => $pw->value);
   },
 ) or note($EVAL_ERROR);
@@ -107,6 +110,7 @@ my $version_key;
 ok(
   lives {
     $version_key = VersionKey->new(key_map => \%key_map, current => $current);
+    is($version_key ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 

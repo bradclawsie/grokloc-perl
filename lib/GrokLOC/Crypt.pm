@@ -12,6 +12,7 @@ class IV {
   use Carp::Assert::More qw( assert_like );
   use Readonly           ();
   use UUID               qw( parse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $LEN => 16;
 
@@ -26,11 +27,20 @@ class IV {
     $s =~ s/\-//xg;
     return $self->new(value => substr $s, 0, $LEN);
   }
+
+  method TO_STRING {
+    return "IV(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? true : false;
+  }
 }
 
 class Key {
   use Carp::Assert::More qw( assert_like );
   use UUID               qw( parse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $LEN => 32;
 
@@ -45,6 +55,15 @@ class Key {
     $s =~ s/\-//xg;
     return $self->new(value => substr $s, 0, $LEN);
   }
+
+  method TO_STRING {
+    return "Key(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? true : false;
+  }
+
 }
 
 class AESGCM {
@@ -76,6 +95,7 @@ class Password {
   use Carp::Assert::More qw( assert_like );
   use Crypt::Argon2      qw( argon2_verify argon2id_pass );
   use UUID               qw( parse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $SALT_LEN => 16;
 
@@ -100,7 +120,15 @@ class Password {
     return argon2_verify($value, $pt);
   }
 
-  method TO_JSON {    # never serialize
+  method TO_STRING {
+    return "Password(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? true : false;
+  }
+
+  method TO_JSON {    # No public serialization.
     return '*****';
   }
 }
@@ -113,6 +141,7 @@ class VersionKey {
     assert_isa
   );
   use UUID qw( parse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   field $key_map :param;
   field $current :param : reader;
@@ -145,6 +174,23 @@ class VersionKey {
     my $value = $key_map->{$key};
     assert_defined($value, 'no value for key in key_map');
     return $value;
+  }
+
+  method TO_STRING {
+    my @pairs = ();
+
+    # Avoiding errors on overloaded '.', '.=' etc.
+    for my $key (keys %{$key_map}) {
+      my $version = "$key_map->{$key}";
+      my $key_    = "$key";
+      push(@pairs, "{$version : $key_}");
+    }
+    my $pairs_str = join(', ', @pairs);
+    return "VersionKey(current => $current, key_map => [$pairs_str])";
+  }
+
+  method TO_BOOL {
+    return defined($current) && defined($key_map) ? true : false;
   }
 }
 
