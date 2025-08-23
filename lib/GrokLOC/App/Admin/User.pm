@@ -19,6 +19,7 @@ class User :does(WithID) : does(WithMeta) {
   use GrokLOC::Models;
   use GrokLOC::Safe;
   use UUID qw( is_null parse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   field $api_key :param : reader;
   field $api_key_digest :param : reader;
@@ -208,6 +209,51 @@ class User :does(WithID) : does(WithMeta) {
       status         => $self->meta->status
     );
     $self->set_meta($meta);
+  }
+
+  # Omitted fields not intended for distribution.
+  method TO_STRING {
+    my $self_id       = $self->id;
+    my $id_           = "$self_id";
+    my $self_meta     = $self->meta;
+    my $meta_         = "$self_meta";
+    my $display_name_ = "$display_name";
+    my $email_        = "$email";
+    my $org_          = "$org";
+
+    return
+        "User(id => $id_, "
+      . "meta => $meta_, "
+      . "api_key => $api_key, "
+      . "api_key_digest => $api_key_digest, "
+      . "display_name => $display_name_, "
+      . "display_name_digest => $display_name_digest, "
+      . "email => $email_, "
+      . "email_digest => $email_digest, "
+      . "org => $org_, "
+      . "key_version => $key_version)";
+  }
+
+  # Will not evaluate to true unless populated with
+  # db metadata.
+  method TO_BOOL {
+    return
+         defined($self->id)
+      && ($self->id->value ne $ID::NIL)
+      && defined($self->meta)
+      && ($self->meta->ctime != 0)
+      && ($self->meta->mtime != 0)
+      && ($self->meta->signature ne q{})
+      && defined($api_key)
+      && defined($api_key_digest)
+      && defined($display_name)
+      && defined($display_name_digest)
+      && defined($email)
+      && defined($email_digest)
+      && defined($org)
+      && ($org->value ne $ID::NIL)
+      && defined($password)
+      && defined($key_version);
   }
 
   # Omitted fields not intended for distribution.

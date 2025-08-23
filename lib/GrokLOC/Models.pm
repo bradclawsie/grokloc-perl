@@ -212,10 +212,12 @@ class Meta {
   }
 
   method TO_STRING {
+    my $role_   = "$role";
+    my $status_ = "$status";
     return
-        "Meta(ctime => $ctime, mtime => $mtime, role => $role, "
+        "Meta(ctime => $ctime, mtime => $mtime, role => $role_, "
       . "schema_version => $schema_version, signature => $signature, "
-      . "status => $status)";
+      . "status => $status_)";
   }
 
   method TO_BOOL {

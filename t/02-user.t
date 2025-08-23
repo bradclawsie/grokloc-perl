@@ -29,9 +29,17 @@ my ($user, $read_user);
 ok(
   lives {
     ($user, undef, undef) = User->rand(ID->rand, $st->version_key->current);
+
+    # Not inserted yet, so evaluates to false.
+    is($user ? true : false, false, 'boolean context');
     $user->insert($st->master->db, $st->version_key);
+
+    # Now $user has post-insert metadata, so it evaluates to true.
+    is($user ? true : false, true, 'boolean context');
+
     my $replica = $st->random_replica;
     $read_user = User->read($replica->db, $user->id, $st->version_key);
+    is($read_user ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
