@@ -166,6 +166,13 @@ class Org :does(WithID) : does(WithMeta) {
     return $owner;
   }
 
+  method users ($db) {
+    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
+
+    my $users =
+      $db->query('select id from users where org = $1', $self->id->value);
+  }
+
   method TO_JSON {
     return {
       id    => $self->id->TO_JSON,

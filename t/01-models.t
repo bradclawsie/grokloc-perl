@@ -13,6 +13,7 @@ use GrokLOC::Models;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
 
+# Role.
 is(Role->default->value, $Role::NORMAL, 'default role');
 
 ok(
@@ -40,6 +41,7 @@ my $role;
 ok(
   lives {
     $role = Role->new(value => $Role::NORMAL);
+    is($role ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
@@ -49,6 +51,7 @@ is($Role::NORMAL, $json->encode($role));
 
 is($Role::NORMAL, Role->default()->value);
 
+# Status.
 is(Status->default->value, $Status::UNCONFIRMED, 'status default');
 
 ok(
@@ -76,6 +79,7 @@ my $status;
 ok(
   lives {
     $status = Status->new(value => $Status::ACTIVE);
+    is($status ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
@@ -84,12 +88,57 @@ is($Status::ACTIVE, $json->encode($status));
 
 is($Status::UNCONFIRMED, Status->default()->value);
 
+# ID.
+my ($bin, $str);
+is(parse($ID::NIL, $bin), 0, 'nil id is not uuid');
+is(is_null($bin),         1, 'nil id is not NULL uuid');
+unparse($bin, $str);
+is($str, $ID::NIL, 'nil id does not round trip');
+
+is(ID->default->value, $ID::NIL, 'ID default');
+
+ok(
+  lives {
+    ID->rand();
+    my $id = ID->new(value => uuid4());
+    is($id ? true : false, true, 'boolean context');
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    ID->new(value => undef);
+  },
+) or note($EVAL_ERROR);
+
+# nil ID is allowed
+ok(
+  lives {
+    ID->new(value => $ID::NIL);
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    ID->new(value => '');
+  },
+) or note($EVAL_ERROR);
+
+ok(
+  lives {
+    my $json =
+      Cpanel::JSON::XS->new->convert_blessed([true])->allow_nonref([true]);
+    ID->new(value => $json->decode($json->encode(ID->new(value => uuid4()))));
+  },
+) or note($EVAL_ERROR);
+
+# Meta.
 my $meta = Meta->default;
-is($meta->ctime,          0, 'meta ctime');
-is($meta->mtime,          0, 'meta mtime');
+is($meta ? true : false,  true, 'boolean context');
+is($meta->ctime,          0,    'meta ctime');
+is($meta->mtime,          0,    'meta mtime');
 is($meta->role->value,    Role->default->value);
 is($meta->schema_version, 0, 'meta schema_version');
-my ($bin, $str);
 clear($bin);    # null uuid
 unparse($bin, $str);
 is($meta->signature,     $str,                   'meta signature');
@@ -271,48 +320,7 @@ ok(
 ) or note($EVAL_ERROR);
 is($meta->status, Status->new(value => $Status::INACTIVE));
 
-is(parse($ID::NIL, $bin), 0, 'nil id is not uuid');
-is(is_null($bin),         1, 'nil id is not NULL uuid');
-unparse($bin, $str);
-is($str, $ID::NIL, 'nil id does not round trip');
-
-is(ID->default->value, $ID::NIL, 'ID default');
-
-ok(
-  lives {
-    ID->rand();
-    ID->new(value => uuid4());
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    ID->new(value => undef);
-  },
-) or note($EVAL_ERROR);
-
-# nil ID is allowed
-ok(
-  lives {
-    ID->new(value => $ID::NIL);
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    ID->new(value => '');
-  },
-) or note($EVAL_ERROR);
-
-ok(
-  lives {
-    my $json =
-      Cpanel::JSON::XS->new->convert_blessed([true])->allow_nonref([true]);
-    ID->new(value => $json->decode($json->encode(ID->new(value => uuid4()))));
-  },
-) or note($EVAL_ERROR);
-
-# Roles testing.
+# WithID.
 use Object::Pad;
 
 class WithIDTest :does(WithID) { }
@@ -341,6 +349,7 @@ ok(
   }
 ) or note($EVAL_ERROR);
 
+# WithMeta.
 class WithMetaTest :does(WithMeta) { }
 
 ok(

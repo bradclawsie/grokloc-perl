@@ -13,6 +13,7 @@ class Role {
   use Readonly           ();
   use feature 'keyword_any';
   no warnings 'experimental::keyword_any';
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NONE   => 0;
   Readonly::Scalar our $NORMAL => 1;
@@ -29,6 +30,14 @@ class Role {
     return $self->new(value => $NORMAL);
   }
 
+  method TO_STRING {
+    return "Role(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? 1 : 0;
+  }
+
   method TO_JSON {
     return $value;
   }
@@ -38,6 +47,7 @@ class Status {
   use Carp::Assert::More qw( assert );
   use feature 'keyword_any';
   no warnings 'experimental::keyword_any';
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NONE        => 0;
   Readonly::Scalar our $UNCONFIRMED => 1;
@@ -54,6 +64,14 @@ class Status {
     return $self->new(value => $UNCONFIRMED);
   }
 
+  method TO_STRING {
+    return "Status(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? 1 : 0;
+  }
+
   method TO_JSON {
     return $value;
   }
@@ -63,6 +81,7 @@ class ID {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
   use UUID               qw( clear is_null parse unparse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
 
@@ -81,6 +100,14 @@ class ID {
 
   sub rand ($self) {
     return $self->new(value => uuid4);
+  }
+
+  method TO_STRING {
+    return "ID(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? 1 : 0;
   }
 
   method TO_JSON {
@@ -112,6 +139,7 @@ class Meta {
   use Carp::Assert::More
     qw( assert assert_defined assert_hashref assert_isa assert_nonnegative assert_numeric );
   use UUID qw( clear is_null parse unparse uuid4 version );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   field $ctime :param : reader;
   field $mtime :param : reader;
@@ -181,6 +209,23 @@ class Meta {
     assert_isa($status_, 'Status', 'status is not type Status');
     $status = $status_;
     return $self;
+  }
+
+  method TO_STRING {
+    return
+        "Meta(ctime => $ctime, mtime => $mtime, role => $role, "
+      . "schema_version => $schema_version, signature => $signature, "
+      . "status => $status)";
+  }
+
+  method TO_BOOL {
+    return
+         defined($ctime)
+      && defined($mtime)
+      && defined($role)
+      && defined($schema_version)
+      && defined($signature)
+      && defined($status) ? 1 : 0;
   }
 
   method TO_JSON {
