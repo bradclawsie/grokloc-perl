@@ -40,6 +40,9 @@ ok(
     my $replica = $st->random_replica;
     $read_user = User->read($replica->db, $user->id, $st->version_key);
     is($read_user ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$user";
   },
 ) or note($EVAL_ERROR);
 

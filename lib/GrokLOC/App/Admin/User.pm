@@ -42,6 +42,11 @@ class User :does(WithID) : does(WithMeta) {
     assert_isa($org,          'ID',       'org is not type ID');
     assert_isa($password,     'Password', 'password is not type Password');
 
+    assert_is($api_key_digest, sha256_hex($api_key), 'api_key_digest');
+    assert_is($display_name_digest, sha256_hex($display_name->value),
+      'display_name_digest');
+    assert_is($email_digest, sha256_hex($email->value), 'email_digest');
+
     my $bin = 0;
     assert(parse($key_version, $bin) == 0
         && (version($bin) == 4 || is_null($bin)),

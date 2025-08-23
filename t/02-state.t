@@ -16,6 +16,9 @@ ok(
     my $st = State->unit;
     is($st ? true : false, true, 'boolean context');
 
+    # TO_STRING
+    my $quoted = "$st";
+
     is($st->master->db->ping, 1, 'master ping');
     for my $replica (@{$st->replicas}) {
       is($replica->db->ping, 1, 'replica ping');

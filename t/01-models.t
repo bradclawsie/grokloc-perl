@@ -42,6 +42,9 @@ ok(
   lives {
     $role = Role->new(value => $Role::NORMAL);
     is($role ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$role";
   },
 ) or note($EVAL_ERROR);
 
@@ -80,6 +83,9 @@ ok(
   lives {
     $status = Status->new(value => $Status::ACTIVE);
     is($status ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$status";
   },
 ) or note($EVAL_ERROR);
 
@@ -102,6 +108,9 @@ ok(
     ID->rand();
     my $id = ID->new(value => uuid4());
     is($id ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$id";
   },
 ) or note($EVAL_ERROR);
 
@@ -134,9 +143,13 @@ ok(
 
 # Meta.
 my $meta = Meta->default;
-is($meta ? true : false,  true, 'boolean context');
-is($meta->ctime,          0,    'meta ctime');
-is($meta->mtime,          0,    'meta mtime');
+is($meta ? true : false, true, 'boolean context');
+
+# TO_STRING
+my $quoted = "$meta";
+
+is($meta->ctime,          0, 'meta ctime');
+is($meta->mtime,          0, 'meta mtime');
 is($meta->role->value,    Role->default->value);
 is($meta->schema_version, 0, 'meta schema_version');
 clear($bin);    # null uuid

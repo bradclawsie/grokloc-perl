@@ -68,6 +68,9 @@ ok(
     my $replica = $st->random_replica;
     $read_org = Org->read($replica->db, $org->id);
     is($read_org ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$org";
   },
 ) or note($EVAL_ERROR);
 

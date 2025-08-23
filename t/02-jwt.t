@@ -24,6 +24,9 @@ ok(
       cip => '127.0.0.1'
     );
     is($token ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$token";
   },
 ) or note($EVAL_ERROR);
 

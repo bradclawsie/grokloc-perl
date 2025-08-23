@@ -20,6 +20,9 @@ ok(
     VarChar->new(value => '.' x $VarChar::STR_MAX);
     my $varchar = VarChar->trusted(uuid4);
     is($varchar ? true : false, true, 'boolean context');
+
+    # TO_STRING
+    my $quoted = "$varchar";
   },
 ) or note($EVAL_ERROR);
 
