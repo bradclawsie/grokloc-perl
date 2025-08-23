@@ -12,6 +12,7 @@ class VarChar {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
   use UUID               qw( uuid4 );
+  use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $STR_MAX => 8192;
 
@@ -49,6 +50,14 @@ class VarChar {
     unless ($trust) {
       assert(varchar($value), 'value not varchar');
     }
+  }
+
+  method TO_STRING {
+    return "VarChar(value => $value)";
+  }
+
+  method TO_BOOL {
+    return defined($value) ? true : false;
   }
 
   method TO_JSON {

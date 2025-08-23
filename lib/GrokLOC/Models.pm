@@ -35,7 +35,7 @@ class Role {
   }
 
   method TO_BOOL {
-    return defined($value) ? 1 : 0;
+    return defined($value) ? true : false;
   }
 
   method TO_JSON {
@@ -69,7 +69,7 @@ class Status {
   }
 
   method TO_BOOL {
-    return defined($value) ? 1 : 0;
+    return defined($value) ? true : false;
   }
 
   method TO_JSON {
@@ -107,7 +107,7 @@ class ID {
   }
 
   method TO_BOOL {
-    return defined($value) ? 1 : 0;
+    return defined($value) ? true : false;
   }
 
   method TO_JSON {
@@ -225,7 +225,7 @@ class Meta {
       && defined($role)
       && defined($schema_version)
       && defined($signature)
-      && defined($status) ? 1 : 0;
+      && defined($status) ? true : false;
   }
 
   method TO_JSON {

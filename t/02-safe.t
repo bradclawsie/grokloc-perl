@@ -1,7 +1,7 @@
 package main;
 use v5.42;
 use English                 qw(-no_match_vars);
-use Test2::V0               qw( dies done_testing note ok );
+use Test2::V0               qw( dies done_testing is note ok );
 use Test2::Tools::Exception qw( lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
@@ -18,7 +18,8 @@ ok(
     VarChar->rand;
     VarChar->new(value => uuid4);
     VarChar->new(value => '.' x $VarChar::STR_MAX);
-    VarChar->trusted(uuid4);
+    my $varchar = VarChar->trusted(uuid4);
+    is($varchar ? true : false, true, 'boolean context');
   },
 ) or note($EVAL_ERROR);
 
