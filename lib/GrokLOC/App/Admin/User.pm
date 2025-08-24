@@ -91,7 +91,7 @@ class User :does(WithID) : does(WithMeta) {
   # Return a random User as if it was read from the
   # database (decrypted). Also return private key
   # and plaintext password.
-  # If a real $org and $key_version are returned,
+  # If a real $org and $key_version are provided,
   # the returned User is insertable.
   sub rand ($self, $org, $key_version) {
     my $pt       = uuid4;                 # Plaintext password.

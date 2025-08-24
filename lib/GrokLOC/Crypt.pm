@@ -102,7 +102,7 @@ class Password {
   field $value :param : reader;
 
   ADJUST {
-    assert_like($value, qr/\$argon2/x, 'password not argon2')
+    assert_like($value, qr/\$argon2/x, 'password not argon2');
   }
 
   sub from ($self, $pt) {
