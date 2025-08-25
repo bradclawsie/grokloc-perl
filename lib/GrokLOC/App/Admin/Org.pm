@@ -1,7 +1,11 @@
 package GrokLOC::App::Admin::Org;
 use v5.42;
 use strictures 2;
+use Data::Checks qw( Isa Str );
 use Object::Pad;
+use Object::Pad::FieldAttr::Checked;
+use Signature::Attribute::Checked;
+use Sublike::Extended qw( method sub );
 use GrokLOC::Models;
 
 # ABSTRACT: Organization model support.
@@ -10,25 +14,19 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Org :does(WithID) : does(WithMeta) {
-  use Carp qw( croak );
-  use Carp::Assert::More
-    qw( assert_defined assert_is assert_isa assert_nonblank );
+  use Carp               qw( croak );
+  use Carp::Assert::More qw( assert_defined assert_is );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
   use GrokLOC::App::Admin::User;
   use GrokLOC::Models;
   use GrokLOC::Safe;
 
-  field $name :param : reader;
-  field $owner :param : reader;
-
-  ADJUST {
-    assert_isa($name,  'VarChar', 'name is not type VarChar');
-    assert_isa($owner, 'ID',      'owner is not type ID');
-  }
+  field $name :param : reader : Checked(Isa('VarChar'));
+  field $owner :param : reader : Checked(Isa('ID'));
 
   # Create a new Org with key fields initialized.
   # This is what is used to create a new Org for insertion.
-  sub default ($self, $name) {
+  sub default ($self, $name :Checked(Isa('VarChar'))) {
     return $self->new(
       id    => ID->default,
       meta  => Meta->default,
@@ -48,10 +46,9 @@ class Org :does(WithID) : does(WithMeta) {
     );
   }
 
-  sub read ($self, $db, $id) {
-    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
-    assert_isa($id, 'ID',                 'id is not type ID');
-
+  sub read ($self,
+            $db :Checked(Isa('Mojo::Pg::Database')),
+            $id :Checked(Isa('ID'))) {
     my $org_read_query = 'select * from orgs where id = $1';
     my $org_row        = $db->query($org_read_query, $id->value)->hash;
 
@@ -71,19 +68,12 @@ class Org :does(WithID) : does(WithMeta) {
     );
   }
 
-  method insert ($db,
-                 $owner_display_name,
-                 $owner_email,
-                 $owner_password,
-                 $owner_key_version,
-                 $version_key) {
-    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
-    assert_isa($owner_display_name, 'VarChar',
-      'owner_display_name not type VarChar');
-    assert_isa($owner_email,    'VarChar',  'owner_email not type VarChar');
-    assert_isa($owner_password, 'Password', 'owner_password not type Password');
-    assert_nonblank($owner_key_version, 'owner_key_version malformed');
-    assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
+  method insert ($db :Checked(Isa('Mojo::Pg::Database')),
+                 $owner_display_name :Checked(Isa('VarChar')),
+                 $owner_email :Checked(Isa('VarChar')),
+                 $owner_password :Checked(Isa('Password')),
+                 $owner_key_version :Checked(Str),
+                 $version_key :Checked(Isa('VersionKey'))) {
 
     # If $id is not $ID::NIL, then it is likely that this Org
     # has already been inserted; the db generates $id.
@@ -167,9 +157,7 @@ class Org :does(WithID) : does(WithMeta) {
     return $owner;
   }
 
-  method users ($db) {
-    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
-
+  method users ($db :Checked(Isa('Mojo::Pg::Database'))) {
     my $users =
       $db->query('select id from users where org = $1', $self->id->value);
   }
