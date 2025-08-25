@@ -617,6 +617,16 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.48
       Test::Simple 0.90
       perl 5.008001
+  Data-Checks-0.10
+    pathname: P/PE/PEVANS/Data-Checks-0.10.tar.gz
+    provides:
+      Data::Checks 0.10
+      Data::Checks::Builder 0.44
+    requirements:
+      ExtUtils::CBuilder 0
+      File::ShareDir 1.00
+      Module::Build 0.4004
+      perl 5.022
   Data-OptList-0.114
     pathname: R/RJ/RJBS/Data-OptList-0.114.tar.gz
     provides:
@@ -1620,6 +1630,17 @@ DISTRIBUTIONS
       XS::Parse::Sublike 0.35
       XS::Parse::Sublike::Builder 0.35
       perl 5.018
+  Object-Pad-FieldAttr-Checked-0.12
+    pathname: P/PE/PEVANS/Object-Pad-FieldAttr-Checked-0.12.tar.gz
+    provides:
+      Object::Pad::FieldAttr::Checked 0.12
+    requirements:
+      Data::Checks 0.09
+      ExtUtils::CBuilder 0
+      Module::Build 0.4004
+      Object::Pad 0.810
+      Object::Pad::ExtensionBuilder 0.810
+      perl 5.022
   PPI-1.283
     pathname: M/MI/MITHALDU/PPI-1.283.tar.gz
     provides:
@@ -2641,6 +2662,17 @@ DISTRIBUTIONS
       Test::Warn 0
       XSLoader 0
       perl 5.008
+  Signature-Attribute-Checked-0.06
+    pathname: P/PE/PEVANS/Signature-Attribute-Checked-0.06.tar.gz
+    provides:
+      Signature::Attribute::Checked 0.06
+    requirements:
+      Data::Checks 0.09
+      ExtUtils::CBuilder 0
+      Module::Build 0.4004
+      XS::Parse::Sublike 0.19
+      XS::Parse::Sublike::Builder 0.19
+      perl 5.026
   Specio-0.52
     pathname: D/DR/DROLSKY/Specio-0.52.tar.gz
     provides:
