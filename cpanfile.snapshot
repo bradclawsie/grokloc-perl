@@ -96,6 +96,20 @@ DISTRIBUTIONS
     requirements:
       B 0
       ExtUtils::MakeMaker 0
+  Bytes-Random-Secure-0.29
+    pathname: D/DA/DAVIDO/Bytes-Random-Secure-0.29.tar.gz
+    provides:
+      Bytes::Random::Secure 0.29
+    requirements:
+      Carp 0
+      Crypt::Random::Seed 0
+      ExtUtils::MakeMaker 6.56
+      MIME::Base64 0
+      MIME::QuotedPrint 3.03
+      Math::Random::ISAAC 0
+      Scalar::Util 1.21
+      Test::More 0.98
+      perl 5.006000
   CPAN-Common-Index-0.010
     pathname: D/DA/DAGOLDEN/CPAN-Common-Index-0.010.tar.gz
     provides:
@@ -357,6 +371,34 @@ DISTRIBUTIONS
       Scalar::Util 0
       Test::More 0.88
       perl 5.006
+  Crypt-Random-Seed-0.03
+    pathname: D/DA/DANAJ/Crypt-Random-Seed-0.03.tar.gz
+    provides:
+      Crypt::Random::Seed 0.03
+    requirements:
+      Carp 0
+      Crypt::Random::TESHA2 0
+      Exporter 5.562
+      ExtUtils::MakeMaker 0
+      Fcntl 0
+      Test::More 0.45
+      base 0
+      constant 0
+      perl 5.006002
+  Crypt-Random-TESHA2-0.01
+    pathname: D/DA/DANAJ/Crypt-Random-TESHA2-0.01.tar.gz
+    provides:
+      Crypt::Random::TESHA2 0.01
+      Crypt::Random::TESHA2::Config 0.01
+    requirements:
+      Carp 0
+      Digest::SHA 5.22
+      Exporter 5.562
+      ExtUtils::MakeMaker 0
+      Test::More 0.45
+      Time::HiRes 1.9711
+      base 0
+      perl 5.006002
   CryptX-0.087
     pathname: M/MI/MIK/CryptX-0.087.tar.gz
     provides:
@@ -1176,6 +1218,15 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
+  Math-Random-ISAAC-1.004
+    pathname: J/JA/JAWNSY/Math-Random-ISAAC-1.004.tar.gz
+    provides:
+      Math::Random::ISAAC 1.004
+      Math::Random::ISAAC::PP 1.004
+    requirements:
+      ExtUtils::MakeMaker 6.31
+      Test::More 0.62
+      Test::NoWarnings 0.084
   Menlo-1.9019
     pathname: M/MI/MIYAGAWA/Menlo-1.9019.tar.gz
     provides:
@@ -2906,6 +2957,15 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Test::Builder 0.12
       Test::Builder::Tester 1.04
+  Test-NoWarnings-1.06
+    pathname: H/HA/HAARG/Test-NoWarnings-1.06.tar.gz
+    provides:
+      Test::NoWarnings 1.06
+      Test::NoWarnings::Warning 1.06
+    requirements:
+      ExtUtils::MakeMaker 0
+      Test::Builder 0.86
+      perl 5.006
   Test-Warn-0.37
     pathname: B/BI/BIGJ/Test-Warn-0.37.tar.gz
     provides:
@@ -3495,13 +3555,6 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  local-lib-2.000029
-    pathname: H/HA/HAARG/local-lib-2.000029.tar.gz
-    provides:
-      lib::core::only undef
-      local::lib 2.000029
-    requirements:
-      perl 5.006
   multidimensional-0.014
     pathname: I/IL/ILMARI/multidimensional-0.014.tar.gz
     provides:

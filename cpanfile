@@ -1,5 +1,6 @@
 requires 'App::perlimports';
 requires 'bareword::filehandles';
+requires 'Bytes::Random::Secure';
 requires 'Carp';
 requires 'Carp::Assert::More';
 requires 'Cpanel::JSON::XS';

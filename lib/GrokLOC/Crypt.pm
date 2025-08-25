@@ -9,9 +9,9 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class IV {
-  use Carp::Assert::More qw( assert_like );
-  use Readonly           ();
-  use UUID               qw( parse uuid4 version );
+  use Bytes::Random::Secure qw( random_bytes_hex );
+  use Carp::Assert::More    qw( assert_like );
+  use Readonly              ();
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $LEN => 16;
@@ -23,9 +23,7 @@ class IV {
   }
 
   sub rand ($self) {
-    my $s = uuid4;
-    $s =~ s/\-//xg;
-    return $self->new(value => substr $s, 0, $LEN);
+    return $self->new(value => random_bytes_hex(int($LEN / 2)));
   }
 
   method TO_STRING {
@@ -38,8 +36,8 @@ class IV {
 }
 
 class Key {
-  use Carp::Assert::More qw( assert_like );
-  use UUID               qw( parse uuid4 version );
+  use Bytes::Random::Secure qw( random_bytes_hex );
+  use Carp::Assert::More    qw( assert_like );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $LEN => 32;
@@ -51,9 +49,7 @@ class Key {
   }
 
   sub rand ($self) {
-    my $s = uuid4;
-    $s =~ s/\-//xg;
-    return $self->new(value => substr $s, 0, $LEN);
+    return $self->new(value => random_bytes_hex(int($LEN / 2)));
   }
 
   method TO_STRING {
@@ -92,9 +88,9 @@ class AESGCM {
 }
 
 class Password {
-  use Carp::Assert::More qw( assert_like );
-  use Crypt::Argon2      qw( argon2_verify argon2id_pass );
-  use UUID               qw( parse uuid4 version );
+  use Bytes::Random::Secure qw( random_bytes_hex );
+  use Carp::Assert::More    qw( assert_like );
+  use Crypt::Argon2         qw( argon2_verify argon2id_pass );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $SALT_LEN => 16;
@@ -106,14 +102,12 @@ class Password {
   }
 
   sub from ($self, $pt) {
-    my $s = uuid4;
-    $s =~ s/\-//xg;
-    my $salt = substr $s, 0, $SALT_LEN;
+    my $salt = random_bytes_hex(int($SALT_LEN / 2));
     return $self->new(value => argon2id_pass($pt, $salt, 1, '32M', 1, 16));
   }
 
   sub rand ($self) {
-    return $self->from(uuid4);
+    return $self->from(random_bytes_hex(8));
   }
 
   method test ($pt) {
