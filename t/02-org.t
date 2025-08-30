@@ -9,10 +9,12 @@ use strictures 2;
 use GrokLOC::App::State;
 use GrokLOC::App::Admin::Org;
 use GrokLOC::Crypt;
-use GrokLOC::Models;
+use GrokLOC::Models::ID;
+use GrokLOC::Models::Role;
+use GrokLOC::Models::Status;
 use GrokLOC::Safe;
 
-# ABSTRACT: test Org
+# ABSTRACT: Test Org.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

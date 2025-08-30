@@ -6,7 +6,8 @@ use Object::Pad;
 use Object::Pad::FieldAttr::Checked;
 use Signature::Attribute::Checked;
 use Sublike::Extended qw( method sub );
-use GrokLOC::Models;
+use GrokLOC::Models::ID;
+use GrokLOC::Models::Meta;
 
 # ABSTRACT: Organization model support.
 
@@ -18,7 +19,10 @@ class Org :does(WithID) : does(WithMeta) {
   use Carp::Assert::More qw( assert_defined assert_is );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
   use GrokLOC::App::Admin::User;
-  use GrokLOC::Models;
+  use GrokLOC::Models::ID;
+  use GrokLOC::Models::Meta;
+  use GrokLOC::Models::Role;
+  use GrokLOC::Models::Status;
   use GrokLOC::Safe;
 
   field $name :param : reader : Checked(Isa('VarChar'));
@@ -37,7 +41,7 @@ class Org :does(WithID) : does(WithMeta) {
 
   sub rand ($self) {
     my $meta = Meta->default;
-    $meta->set_role(Role->new(value => $Role::TEST));
+    $meta->set_role(Role->test);
     return $self->new(
       id    => ID->default,
       meta  => $meta,
@@ -75,9 +79,10 @@ class Org :does(WithID) : does(WithMeta) {
                  $owner_key_version :Checked(Str),
                  $version_key :Checked(Isa('VersionKey'))) {
 
-    # If $id is not $ID::NIL, then it is likely that this Org
-    # has already been inserted; the db generates $id.
-    assert_is($self->id->value, $ID::NIL, 'id is not nil');
+    # If id is true in the boolean context, then
+    # the id value has been set; but only the db
+    # creates ids, so it should not be set yet.
+    croak 'id value is not undef' if $self->id;
 
     # Insert Org with nil owner for now.
     my $insert_org_query = <<~'INSERT_ORG';
@@ -112,11 +117,9 @@ class Org :does(WithID) : does(WithMeta) {
     );
 
     # Owner is considered active by default.
-    $owner_user->meta->set_status(Status->new(value => $Status::ACTIVE));
-
+    $owner_user->meta->set_status(Status->active);
     $owner_user->insert($db, $version_key);
 
-    # Reminder: $owner is field in $self.
     $owner = ID->new(value => $owner_user->id->value);
 
     # Update the org with the actual owner information
@@ -131,7 +134,7 @@ class Org :does(WithID) : does(WithMeta) {
 
     my $update_org_results =
       $db->query($update_org_query, $owner->value,
-      Status->new(value => $Status::ACTIVE)->value,
+      Status->active->value,
       $self->id->value);
     my $update_org_returning = $update_org_results->hash;
 
@@ -143,7 +146,7 @@ class Org :does(WithID) : does(WithMeta) {
         role           => Role->new(value => $self->meta->role->value),
         schema_version => $self->meta->schema_version,
         signature      => $update_org_returning->{signature},
-        status         => Status->new(value => $Status::ACTIVE)
+        status         => Status->active
       )
     );
 
@@ -182,7 +185,7 @@ class Org :does(WithID) : does(WithMeta) {
   method TO_BOOL {
     return
          defined($self->id)
-      && ($self->id->value ne $ID::NIL)
+      && $self->id
       && defined($self->meta)
       && ($self->meta->ctime != 0)
       && ($self->meta->mtime != 0)

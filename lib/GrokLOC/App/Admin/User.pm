@@ -2,7 +2,8 @@ package GrokLOC::App::Admin::User;
 use v5.42;
 use strictures 2;
 use Object::Pad;
-use GrokLOC::Models;
+use GrokLOC::Models::ID;
+use GrokLOC::Models::Meta;
 
 # ABSTRACT: User model support.
 
@@ -16,7 +17,9 @@ class User :does(WithID) : does(WithMeta) {
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
   use GrokLOC::Crypt;
-  use GrokLOC::Models;
+  use GrokLOC::Models::ID;
+  use GrokLOC::Models::Meta;
+  use GrokLOC::Models::Role;
   use GrokLOC::Safe;
   use UUID qw( is_null parse uuid4 version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
@@ -156,12 +159,13 @@ class User :does(WithID) : does(WithMeta) {
     assert_isa($db, 'Mojo::Pg::Database',  'db is not type Mojo::Pg::Database');
     assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
 
-    # If $id is not $ID::NIL, then it is likely that this Org
-    # has already been inserted; the db generates $id.
-    assert_is($self->id->value, $ID::NIL, 'db generates id on insert');
+    # If id is true in the boolean context, then
+    # the id value has been set; but only the db
+    # creates ids, so it should not be set yet.
+    croak 'id value is not undef' if $self->id;
 
-    # Catch a nil Org; this is always an error.
-    assert_isnt($self->org->value, $ID::NIL, 'org is nil');
+    # Catch an undefined Org; this is always an error.
+    croak 'org is undef' unless $self->org;
 
     my $encryption_key = $version_key->get($key_version);
     assert_isa($encryption_key, 'Key', 'encryption_key is not type Key');
@@ -244,8 +248,9 @@ class User :does(WithID) : does(WithMeta) {
   method TO_BOOL {
     return
          defined($self->id)
-      && ($self->id->value ne $ID::NIL)
+      && $self->id
       && defined($self->meta)
+      && $self->meta
       && ($self->meta->ctime != 0)
       && ($self->meta->mtime != 0)
       && ($self->meta->signature ne q{})

@@ -6,7 +6,7 @@ use Test2::Tools::Exception qw( dies lives );
 use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::App::JWT;
-use GrokLOC::Models;
+use GrokLOC::Models::ID;
 
 # ABSTRACT: test App::JWT
 

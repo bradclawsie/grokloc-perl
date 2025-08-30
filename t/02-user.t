@@ -8,11 +8,11 @@ use UUID                    qw( uuid4 );
 use strictures 2;
 use feature 'try';
 use GrokLOC::App::Admin::User;
-use GrokLOC::Models;
+use GrokLOC::Models::ID;
 use GrokLOC::Safe;
 use GrokLOC::App::State;
 
-# ABSTRACT: test User
+# ABSTRACT: Test User.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

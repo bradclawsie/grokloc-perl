@@ -2,6 +2,10 @@ Carp::Assert::More
 GrokLOC::Crypt
 GrokLOC::Env
 GrokLOC::Models
+GrokLOC::Models::ID
+GrokLOC::Models::Meta
+GrokLOC::Models::Role
+GrokLOC::Models::Status
 GrokLOC::Safe
 GrokLOC::App::JWT
 GrokLOC::App::State

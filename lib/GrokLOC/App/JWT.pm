@@ -16,7 +16,7 @@ class JWT {
   use Net::IP    qw( ip_is_ipv4 ip_is_ipv6 );
   use Readonly   ();
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
-  use GrokLOC::Models;
+  use GrokLOC::Models::ID;
 
   Readonly::Scalar our $TOKEN_TYPE => 'Bearer';
 
