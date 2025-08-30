@@ -18,9 +18,9 @@ is(Role->default->value, $Role::NORMAL, 'default role');
 
 ok(
   lives {
-    Role->new(value => $Role::NORMAL);
-    Role->new(value => $Role::ADMIN);
-    Role->new(value => $Role::TEST);
+    Role->normal;
+    Role->admin;
+    Role->test;
   },
 ) or note($EVAL_ERROR);
 
@@ -40,7 +40,7 @@ my $role;
 
 ok(
   lives {
-    $role = Role->new(value => $Role::NORMAL);
+    $role = Role->normal;
     is($role ? true : false, true, 'boolean context');
 
     # TO_STRING
@@ -59,9 +59,9 @@ is(Status->default->value, $Status::UNCONFIRMED, 'status default');
 
 ok(
   lives {
-    Status->new(value => $Status::UNCONFIRMED);
-    Status->new(value => $Status::ACTIVE);
-    Status->new(value => $Status::INACTIVE);
+    Status->unconfirmed;
+    Status->active;
+    Status->inactive;
   },
 ) or note($EVAL_ERROR);
 
@@ -81,7 +81,7 @@ my $status;
 
 ok(
   lives {
-    $status = Status->new(value => $Status::ACTIVE);
+    $status = Status->active;
     is($status ? true : false, true, 'boolean context');
 
     # TO_STRING
@@ -141,8 +141,54 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+# WithID.
+use Object::Pad;
+
+class WithIDTest :does(WithID) { }
+
+ok(
+  lives {
+    WithIDTest->new(id => ID->rand)->set_id(ID->rand);
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => 'not an ID');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => ID->rand)->set_id('not an ID');
+  }
+) or note($EVAL_ERROR);
+
+ok(
+  dies {
+    WithIDTest->new(id => ID->rand)->set_id(ID->default);
+  }
+) or note($EVAL_ERROR);
+
 # Meta.
 my $meta = Meta->default;
+
+# Boolean context fails as signature is undefined.
+is($meta ? true : false, false, 'boolean context');
+
+# Signature must be set as uuid4.
+ok(
+  dies {
+    $meta->set_signature('not a uuid');
+  }
+) or note($EVAL_ERROR);
+ok(
+  lives {
+    $meta->set_signature(uuid4);
+  }
+) or note($EVAL_ERROR);
+
+# Boolean context succeeds as signature is defined.
 is($meta ? true : false, true, 'boolean context');
 
 # TO_STRING
@@ -152,9 +198,7 @@ is($meta->ctime,          0, 'meta ctime');
 is($meta->mtime,          0, 'meta mtime');
 is($meta->role->value,    Role->default->value);
 is($meta->schema_version, 0, 'meta schema_version');
-clear($bin);    # null uuid
-unparse($bin, $str);
-is($meta->signature,     $str,                   'meta signature');
+ok(parse($bin, $meta->signature));
 is($meta->status->value, Status->default->value, 'meta status');
 
 ok(
@@ -332,35 +376,6 @@ ok(
   }
 ) or note($EVAL_ERROR);
 is($meta->status, Status->new(value => $Status::INACTIVE));
-
-# WithID.
-use Object::Pad;
-
-class WithIDTest :does(WithID) { }
-
-ok(
-  lives {
-    WithIDTest->new(id => ID->rand)->set_id(ID->rand);
-  }
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    WithIDTest->new(id => 'not an ID');
-  }
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    WithIDTest->new(id => ID->rand)->set_id('not an ID');
-  }
-) or note($EVAL_ERROR);
-
-ok(
-  dies {
-    WithIDTest->new(id => ID->rand)->set_id(ID->default);
-  }
-) or note($EVAL_ERROR);
 
 # WithMeta.
 class WithMetaTest :does(WithMeta) { }

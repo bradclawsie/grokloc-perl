@@ -1,7 +1,11 @@
 package GrokLOC::Models;
 use v5.42;
 use strictures 2;
+use Data::Checks qw( Isa Maybe Num NumGE NumRange Str );
 use Object::Pad;
+use Object::Pad::FieldAttr::Checked;
+use Signature::Attribute::Checked;
+use Sublike::Extended qw( method sub );
 
 # ABSTRACT: Core types relevant to all model instances.
 
@@ -11,8 +15,6 @@ our $AUTHORITY = 'cpan:bclawsie';
 class Role {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
-  use feature 'keyword_any';
-  no warnings 'experimental::keyword_any';
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NONE   => 0;
@@ -20,14 +22,22 @@ class Role {
   Readonly::Scalar our $ADMIN  => 2;
   Readonly::Scalar our $TEST   => 3;
 
-  field $value :param : reader;
-
-  ADJUST {
-    assert(any { $_ == $value } ($NORMAL, $ADMIN, $TEST), 'value');
-  }
+  field $value :param : reader : Checked(NumRange(1,4));
 
   sub default ($self) {
     return $self->new(value => $NORMAL);
+  }
+
+  sub normal ($self) {
+    return $self->new(value => $NORMAL);
+  }
+
+  sub admin ($self) {
+    return $self->new(value => $ADMIN);
+  }
+
+  sub test ($self) {
+    return $self->new(value => $TEST);
   }
 
   method TO_STRING {
@@ -45,8 +55,6 @@ class Role {
 
 class Status {
   use Carp::Assert::More qw( assert );
-  use feature 'keyword_any';
-  no warnings 'experimental::keyword_any';
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NONE        => 0;
@@ -54,14 +62,22 @@ class Status {
   Readonly::Scalar our $ACTIVE      => 2;
   Readonly::Scalar our $INACTIVE    => 3;
 
-  field $value :param : reader;
-
-  ADJUST {
-    assert(any { $_ == $value } ($UNCONFIRMED, $ACTIVE, $INACTIVE), 'value');
-  }
+  field $value :param : reader : Checked(NumRange(1,4));
 
   sub default ($self) {
     return $self->new(value => $UNCONFIRMED);
+  }
+
+  sub unconfirmed ($self) {
+    return $self->new(value => $UNCONFIRMED);
+  }
+
+  sub active ($self) {
+    return $self->new(value => $ACTIVE);
+  }
+
+  sub inactive ($self) {
+    return $self->new(value => $INACTIVE);
   }
 
   method TO_STRING {
@@ -85,7 +101,7 @@ class ID {
 
   Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
 
-  field $value :param : reader;
+  field $value :param : reader : Checked(Str);
 
   ADJUST {
     my $bin = 0;
@@ -118,15 +134,9 @@ class ID {
 role WithID {
   use Carp::Assert::More qw( assert_defined assert_isa assert_isnt );
 
-  field $id :param : reader;
+  field $id :param : reader : Checked(Isa('ID'));
 
-  ADJUST {
-    assert_defined($id, 'id not defined on object');
-    assert_isa($id, 'ID', 'type of id is not ID');
-  }
-
-  method set_id ($id_) {
-    assert_isa($id_, 'ID', 'type of id_ is not ID');
+  method set_id ($id_ :Checked(Isa('ID'))) {
 
     # Setting to $ID::NIL after construction is forbidden.
     assert_isnt($id_->value, $ID::NIL, 'id value is ID::NIL');
@@ -136,17 +146,16 @@ role WithID {
 }
 
 class Meta {
-  use Carp::Assert::More
-    qw( assert assert_defined assert_hashref assert_isa assert_nonnegative assert_numeric );
-  use UUID qw( clear is_null parse unparse uuid4 version );
+  use Carp::Assert::More qw( assert assert_defined assert_hashref assert_isa );
+  use UUID               qw( clear is_null parse unparse uuid4 version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
-  field $ctime :param : reader;
-  field $mtime :param : reader;
-  field $role :param : reader;
-  field $schema_version :param : reader;
-  field $signature :param : reader;
-  field $status :param : reader;
+  field $ctime :param : reader : Checked(Num);
+  field $mtime :param : reader : Checked(Num);
+  field $role :param : reader : Checked(Isa('Role'));
+  field $schema_version :param : reader : Checked(NumGE(0));
+  field $signature :param : reader : Checked(Maybe(Str));
+  field $status :param : reader : Checked(Isa('Status'));
 
   ADJUST {
     my $now = time;
@@ -158,14 +167,11 @@ class Meta {
         && $mtime <= $now,
       'mtime',
     );
-    assert_isa($role, 'Role', 'role is not type Role');
-    assert_numeric($schema_version, 'schema_version');
-    assert_nonnegative($schema_version, 'schema_version');
-    my $bin = 0;
-    assert(parse($signature, $bin) == 0
-        && (version($bin) == 4 || is_null($bin)),
-      'signature not uuidv4');
-    assert_isa($status, 'Status', 'status not type Status');
+    if (defined $signature) {
+      my $bin = 0;
+      assert(parse($signature, $bin) == 0 && version($bin) == 4,
+        'signature not uuidv4');
+    }
   }
 
   sub default ($self) {
@@ -177,7 +183,7 @@ class Meta {
       mtime          => 0,
       role           => Role->default,
       schema_version => 0,
-      signature      => $str,
+      signature      => undef,
       status         => Status->default,
     );
 
@@ -211,12 +217,21 @@ class Meta {
     return $self;
   }
 
+  method set_signature ($signature_ :Checked(Str)) {
+    my $bin = 0;
+    assert(parse($signature_, $bin) == 0 && version($bin) == 4,
+      'signature not uuidv4');
+    $signature = $signature_;
+    return $self;
+  }
+
   method TO_STRING {
-    my $role_   = "$role";
-    my $status_ = "$status";
+    my $role_      = "$role";
+    my $status_    = "$status";
+    my $signature_ = (defined $signature) ? $signature : 'UNDEF';
     return
         "Meta(ctime => $ctime, mtime => $mtime, role => $role_, "
-      . "schema_version => $schema_version, signature => $signature, "
+      . "schema_version => $schema_version, signature => $signature_, "
       . "status => $status_)";
   }
 
