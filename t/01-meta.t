@@ -47,7 +47,7 @@ my $bin = 0;
 ok(parse($bin, $meta->signature));
 is($meta->status->value, Status->default->value, 'meta status');
 
-my $role = Role->default;
+my $role   = Role->default;
 my $status = Status->default;
 
 ok(

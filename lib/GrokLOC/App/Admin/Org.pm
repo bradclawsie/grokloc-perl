@@ -132,10 +132,10 @@ class Org :does(WithID) : does(WithMeta) {
     returning mtime, signature
     UPDATE_ORG
 
-    my $update_org_results =
-      $db->query($update_org_query, $owner->value,
-      Status->active->value,
-      $self->id->value);
+    my $update_org_results = $db->query(
+      $update_org_query,     $owner->value,
+      Status->active->value, $self->id->value
+    );
     my $update_org_returning = $update_org_results->hash;
 
     # Reset metadata to reflect update active state etc.

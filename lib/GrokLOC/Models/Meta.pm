@@ -16,7 +16,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 
 class Meta {
   use Carp::Assert::More qw( assert assert_defined );
-  use UUID               qw( clear is_null parse unparse uuid4 version );
+  use UUID               qw( parse version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   field $ctime :param : reader : Checked(Num);
@@ -49,7 +49,7 @@ class Meta {
       mtime          => 0,
       role           => Role->default,
       schema_version => 0,
-      signature      => undef, # Must come from db.
+      signature      => undef,             # Must come from db.
       status         => Status->default,
     );
 
@@ -120,7 +120,7 @@ class Meta {
 }
 
 role WithMeta {
-  field $meta :param : reader :Checked(Isa('Meta'));
+  field $meta :param : reader : Checked(Isa('Meta'));
 
   method set_meta ($meta_ :Checked(Isa('Meta'))) {
     $meta = $meta_;

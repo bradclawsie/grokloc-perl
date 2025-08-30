@@ -15,7 +15,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class ID {
   use Carp::Assert::More qw( assert );
   use Readonly           ();
-  use UUID               qw( clear parse unparse uuid4 version );
+  use UUID               qw( parse uuid4 version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NIL => '00000000-0000-0000-0000-000000000000';
@@ -63,6 +63,5 @@ role WithID {
     return $self;
   }
 }
-
 
 __END__

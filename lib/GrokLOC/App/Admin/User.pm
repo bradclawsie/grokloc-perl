@@ -13,7 +13,7 @@ our $AUTHORITY = 'cpan:bclawsie';
 class User :does(WithID) : does(WithMeta) {
   use Carp qw( croak );
   use Carp::Assert::More
-    qw( assert assert_defined assert_is assert_isa assert_isnt assert_nonblank );
+    qw( assert assert_defined assert_is assert_isa assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
   use GrokLOC::Crypt;

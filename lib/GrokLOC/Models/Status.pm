@@ -11,7 +11,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Status {
-  use Readonly           ();
+  use Readonly ();
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
   Readonly::Scalar our $NONE        => 0;
