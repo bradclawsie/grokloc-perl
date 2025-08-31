@@ -1,7 +1,11 @@
 package GrokLOC::App::Admin::User;
 use v5.42;
 use strictures 2;
+use Data::Checks qw( Isa Str );
 use Object::Pad;
+use Object::Pad::FieldAttr::Checked;
+use Signature::Attribute::Checked;
+use Sublike::Extended qw( method sub );
 use GrokLOC::Models::ID;
 use GrokLOC::Models::Meta;
 
@@ -21,18 +25,18 @@ class User :does(WithID) : does(WithMeta) {
   use GrokLOC::Models::Meta;
   use GrokLOC::Models::Role;
   use GrokLOC::Safe;
-  use UUID qw( is_null parse uuid4 version );
+  use UUID qw( parse uuid4 version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
-  field $api_key :param : reader;
-  field $api_key_digest :param : reader;
-  field $display_name :param : reader;
-  field $display_name_digest :param : reader;
-  field $email :param : reader;
-  field $email_digest :param : reader;
-  field $org :param : reader;
-  field $password :param : reader;
-  field $key_version :param : reader;
+  field $api_key :param : reader : Checked(Str);
+  field $api_key_digest :param : reader : Checked(Str);
+  field $display_name :param : reader : Checked(Isa('VarChar'));
+  field $display_name_digest :param : reader : Checked(Str);
+  field $email :param : reader : Checked(Isa('VarChar'));
+  field $email_digest :param : reader : Checked(Str);
+  field $org :param : reader : Checked(Isa('ID'));
+  field $password :param : reader : Checked(Isa('Password'));
+  field $key_version :param : reader : Checked(Str);
 
   ADJUST {
     # Although api_key may be user provided, it is not
@@ -40,29 +44,24 @@ class User :does(WithID) : does(WithMeta) {
     # through VarChar.
     assert_nonblank($api_key, 'api_key is malformed');
 
-    assert_isa($display_name, 'VarChar',  'display_name is not VarChar');
-    assert_isa($email,        'VarChar',  'email is not VarChar');
-    assert_isa($org,          'ID',       'org is not type ID');
-    assert_isa($password,     'Password', 'password is not type Password');
-
     assert_is($api_key_digest, sha256_hex($api_key), 'api_key_digest');
     assert_is($display_name_digest, sha256_hex($display_name->value),
       'display_name_digest');
     assert_is($email_digest, sha256_hex($email->value), 'email_digest');
 
     my $bin = 0;
-    assert(parse($key_version, $bin) == 0
-        && (version($bin) == 4 || is_null($bin)),
+    assert(parse($key_version, $bin) == 0 && version($bin) == 4,
       'key_version not uuidv4');
   }
 
   # Create a new User with key fields initialized.
   # This is what is used to create a new User for insertion.
-  sub default ($self, $display_name, $email, $org, $password, $key_version) {
-
-    # Check these early as their respective ->values are needed here.
-    assert_isa($display_name, 'VarChar', 'display_name is not VarChar');
-    assert_isa($email,        'VarChar', 'email is not VarChar');
+  sub default ($self,
+               $display_name :Checked(Isa('VarChar')),
+               $email :Checked(Isa('VarChar')),
+               $org :Checked(Isa('ID')),
+               $password :Checked(Isa('Password')),
+               $key_version :Checked(Str)) {
 
     my $display_name_digest = sha256_hex($display_name->value);
     my $email_digest        = sha256_hex($email->value);
@@ -96,7 +95,9 @@ class User :does(WithID) : does(WithMeta) {
   # and plaintext password.
   # If a real $org and $key_version are provided,
   # the returned User is insertable.
-  sub rand ($self, $org, $key_version) {
+  sub rand ($self,
+            $org :Checked(Isa('ID')),
+            $key_version :Checked(Str)) {
     my $pt       = uuid4;                 # Plaintext password.
     my $password = Password->from($pt);
 
@@ -107,16 +108,14 @@ class User :does(WithID) : does(WithMeta) {
       $self->default($display_name, $email, $org, $password, $key_version);
 
     # Random user should have test role.
-    $user->meta->set_role(Role->new(value => $Role::TEST));
+    $user->meta->set_role(Role->test);
     return ($user, $private_key, $pt);
   }
 
-  sub read ($self, $db, $id, $version_key) {
-    assert_isa($db, 'Mojo::Pg::Database', 'db is not type Mojo::Pg::Database');
-    assert_isa($id, 'ID',                 'id is not type ID');
-    assert_isa($version_key, 'VersionKey',
-      'version_key is not type VersionKey');
-
+  sub read ($self,
+            $db :Checked(Isa('Mojo::Pg::Database')),
+            $id :Checked(Isa('ID')),
+            $version_key :Checked(Isa('VersionKey'))) {
     my $user_read_query = 'select * from users where id = $1';
     my $user_row        = $db->query($user_read_query, $id->value)->hash;
 
@@ -160,9 +159,8 @@ class User :does(WithID) : does(WithMeta) {
     );
   }
 
-  method insert ($db, $version_key) {
-    assert_isa($db, 'Mojo::Pg::Database',  'db is not type Mojo::Pg::Database');
-    assert_isa($version_key, 'VersionKey', 'version_key not type VersionKey');
+  method insert ($db :Checked(Isa('Mojo::Pg::Database')),
+                 $version_key :Checked(Isa('VersionKey'))) {
 
     # If id is true in the boolean context, then
     # the id value has been set; but only the db
