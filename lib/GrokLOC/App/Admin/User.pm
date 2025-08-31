@@ -122,7 +122,12 @@ class User :does(WithID) : does(WithMeta) {
 
     # Croak on errors that are catch-able.
     croak 'no rows' unless (defined($user_row));
-    my $meta = Meta->from_hashref($user_row);
+
+    # Convert role and status from numeric to object representation.
+    $user_row->{role}   = Role->new(value => $user_row->{role});
+    $user_row->{status} = Status->new(value => $user_row->{status});
+
+    my $meta = Meta->new(%{$user_row});
 
     for my $col (
       qw(id api_key api_key_digest display_name

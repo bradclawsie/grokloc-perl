@@ -1,7 +1,7 @@
 package GrokLOC::Models::Meta;
 use v5.42;
 use strictures 2;
-use Data::Checks qw( HashRef Isa Maybe Num NumGE Str );
+use Data::Checks qw( Isa Maybe Num NumGE Str );
 use Object::Pad;
 use Object::Pad::FieldAttr::Checked;
 use Signature::Attribute::Checked;
@@ -15,7 +15,7 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Meta {
-  use Carp::Assert::More qw( assert assert_defined );
+  use Carp::Assert::More qw( assert );
   use UUID               qw( parse version );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
 
@@ -52,21 +52,6 @@ class Meta {
       signature      => undef,             # Must come from db.
       status         => Status->default,
     );
-
-    sub from_hashref ($self, $hashref :Checked(HashRef)) {
-      for my $col (qw(ctime mtime role schema_version signature status)) {
-        assert_defined($hashref->{$col}, "$col not defined");
-      }
-
-      return $self->new(
-        ctime          => $hashref->{ctime},
-        mtime          => $hashref->{mtime},
-        role           => Role->new(value => $hashref->{role}),
-        schema_version => $hashref->{schema_version},
-        signature      => $hashref->{signature},
-        status         => Status->new(value => $hashref->{status})
-      );
-    }
   }
 
   method set_role ($role_ :Checked(Isa('Role'))) {

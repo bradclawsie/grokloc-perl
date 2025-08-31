@@ -58,7 +58,12 @@ class Org :does(WithID) : does(WithMeta) {
 
     # Croak on errors that are catch-able.
     croak 'no rows' unless (defined($org_row));
-    my $meta = Meta->from_hashref($org_row);
+
+    # Convert role and status from numeric to object representation.
+    $org_row->{role}   = Role->new(value => $org_row->{role});
+    $org_row->{status} = Status->new(value => $org_row->{status});
+
+    my $meta = Meta->new(%{$org_row});
 
     for my $col (qw(id name owner)) {
       assert_defined($org_row->{$col}, "$col not defined");
