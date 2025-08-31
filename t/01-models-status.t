@@ -23,6 +23,9 @@ ok(
 ) or note($EVAL_ERROR);
 
 ok(
+  Status->unconfirmed->value < Status->active->value < Status->inactive->value);
+
+ok(
   dies {
     Status->new();
   },

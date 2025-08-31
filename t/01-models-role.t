@@ -23,6 +23,8 @@ ok(
   },
 ) or note($EVAL_ERROR);
 
+ok(Role->normal->value < Role->admin->value < Role->test->value);
+
 ok(
   dies {
     Role->new();

@@ -1,7 +1,9 @@
 package GrokLOC::Env;
 use v5.42;
 use strictures 2;
+use Data::Checks qw( NumRange );
 use Object::Pad;
+use Object::Pad::FieldAttr::Checked;
 
 # ABSTRACT: Describe the execution environment.
 
@@ -9,25 +11,30 @@ our $VERSION   = '0.0.1';
 our $AUTHORITY = 'cpan:bclawsie';
 
 class Env {
-  use Carp::Assert::More qw (assert);
-  use Readonly           ();
-  use feature 'keyword_any';
-  no warnings 'experimental::keyword_any';
+  use Readonly ();
 
-  Readonly::Scalar our $NONE  => -1;
-  Readonly::Scalar our $UNIT  => 0;
-  Readonly::Scalar our $DEV   => 1;
-  Readonly::Scalar our $STAGE => 2;
-  Readonly::Scalar our $PROD  => 3;
+  Readonly::Scalar our $NONE  => 0;
+  Readonly::Scalar our $UNIT  => 1;
+  Readonly::Scalar our $DEV   => 2;
+  Readonly::Scalar our $STAGE => 3;
+  Readonly::Scalar our $PROD  => 4;
 
-  field $value :param : reader;
+  field $value :param : reader : Checked(NumRange(1,5));
 
-  ADJUST {
-    assert(any { $_ == $value } ($UNIT, $DEV, $STAGE, $PROD), 'value');
+  sub unit ($self) {
+    return $self->new(value => $UNIT);
   }
 
-  sub TO_JSON ($self) {
-    return $self->value;
+  sub dev ($self) {
+    return $self->new(value => $DEV);
+  }
+
+  sub stage ($self) {
+    return $self->new(value => $STAGE);
+  }
+
+  sub prod ($self) {
+    return $self->new(value => $PROD);
   }
 }
 
