@@ -8,7 +8,7 @@ use strictures 2;
 use GrokLOC::App::JWT;
 use GrokLOC::Models::ID;
 
-# ABSTRACT: test App::JWT
+# ABSTRACT: Test App::JWT.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

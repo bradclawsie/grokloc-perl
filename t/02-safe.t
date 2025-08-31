@@ -7,7 +7,7 @@ use UUID                    qw( uuid4 );
 use strictures 2;
 use GrokLOC::Safe;
 
-# ABSTRACT: test Safe
+# ABSTRACT: Test Safe.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

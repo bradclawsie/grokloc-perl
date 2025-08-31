@@ -6,7 +6,7 @@ use Test2::Tools::Exception qw( lives );
 use strictures 2;
 use GrokLOC::App::State;
 
-# ABSTRACT: test App::State
+# ABSTRACT: Test App::State.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

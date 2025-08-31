@@ -7,7 +7,7 @@ use Test2::Tools::Exception qw( dies lives );
 use strictures 2;
 use GrokLOC::Env;
 
-# ABSTRACT: test Env
+# ABSTRACT: Test Env.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';

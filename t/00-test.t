@@ -3,7 +3,7 @@ use v5.42;
 use Test2::V0 qw( done_testing is isnt );
 use strictures 2;
 
-# ABSTRACT: test tests
+# ABSTRACT: Test tests.
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:bclawsie';
