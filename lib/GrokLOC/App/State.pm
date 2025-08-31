@@ -15,7 +15,7 @@ class State {
   use Mojo::Redis;
   use UUID qw( uuid4 );
   use overload '""' => \&TO_STRING, 'bool' => \&TO_BOOL, fallback => 0;
-  use GrokLOC::Crypt;
+  use GrokLOC::Crypt::VersionKey;
   use GrokLOC::Models::Role;
 
   field $api_version :param : reader;

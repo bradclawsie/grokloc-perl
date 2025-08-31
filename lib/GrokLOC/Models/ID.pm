@@ -58,7 +58,7 @@ role WithID {
   field $id :param : reader : Checked(Isa('ID'));
 
   method set_id ($id_ :Checked(Isa('ID'))) {
-    assert_defined($id_->value, 'is value is undefined');
+    assert_defined($id_->value, 'id value is undefined');
     $id = $id_;
     return $self;
   }

@@ -1,14 +1,14 @@
 package main;
 use v5.42;
+use strictures 2;
 use English                 qw(-no_match_vars);
 use Test2::V0               qw( done_testing is note ok );
 use Test2::Tools::Compare   qw( like );
 use Test2::Tools::Exception qw( dies lives );
 use UUID                    qw( uuid4 );
-use strictures 2;
 use GrokLOC::App::State;
 use GrokLOC::App::Admin::Org;
-use GrokLOC::Crypt;
+use GrokLOC::Crypt::Password;
 use GrokLOC::Models::ID;
 use GrokLOC::Models::Role;
 use GrokLOC::Models::Status;

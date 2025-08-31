@@ -20,7 +20,9 @@ class User :does(WithID) : does(WithMeta) {
     qw( assert assert_defined assert_is assert_isa assert_nonblank );
   use Crypt::Digest::SHA256 qw( sha256_hex );
   use Crypt::PK::Ed25519    ();
-  use GrokLOC::Crypt;
+  use GrokLOC::Crypt::AESGCM;
+  use GrokLOC::Crypt::IV;
+  use GrokLOC::Crypt::Password;
   use GrokLOC::Models::ID;
   use GrokLOC::Models::Meta;
   use GrokLOC::Models::Role;

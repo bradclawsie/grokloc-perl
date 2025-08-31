@@ -1,5 +1,9 @@
 Carp::Assert::More
-GrokLOC::Crypt
+GrokLOC::Crypt::AESGCM
+GrokLOC::Crypt::Key
+GrokLOC::Crypt::IV
+GrokLOC::Crypt::Password
+GrokLOC::Crypt::VersionKey
 GrokLOC::Env
 GrokLOC::Models::ID
 GrokLOC::Models::Meta
