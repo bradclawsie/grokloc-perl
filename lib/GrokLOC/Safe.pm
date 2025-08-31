@@ -1,7 +1,11 @@
 package GrokLOC::Safe;
 use v5.42;
 use strictures 2;
+use Data::Checks qw( Str );
 use Object::Pad;
+use Object::Pad::FieldAttr::Checked;
+use Signature::Attribute::Checked;
+use Sublike::Extended qw( sub );
 
 # ABSTRACT: Safe types for database use.
 
@@ -17,9 +21,9 @@ class VarChar {
   Readonly::Scalar our $STR_MAX => 8192;
 
   field $trust :param : reader = false;    # Skip check if true.
-  field $value :param : reader;
+  field $value :param : reader : Checked(Str);
 
-  sub varchar ($s) {
+  sub varchar ($s :Checked(Str)) {
     return false unless (defined $s);
     return false if length $s == 0;
     return false if length $s > $STR_MAX;
@@ -34,6 +38,12 @@ class VarChar {
     return true;
   }
 
+  ADJUST {
+    unless ($trust) {
+      assert(varchar($value), 'value not varchar');
+    }
+  }
+
   sub default ($self) {
     return $self->new(value => q{}, trust => true);
   }
@@ -42,14 +52,8 @@ class VarChar {
     return $self->new(value => uuid4, trust => true);
   }
 
-  sub trusted ($self, $value) {
+  sub trusted ($self, $value :Checked(Str)) {
     return $self->new(value => $value, trust => true);
-  }
-
-  ADJUST {
-    unless ($trust) {
-      assert(varchar($value), 'value not varchar');
-    }
   }
 
   method TO_STRING {
